@@ -1,6 +1,8 @@
 FactoryBot.define do
   factory :contract do
-		status "good"
+  	site
+		status "open"
 		name "B74"
+		code "dd11"
   end
 end
