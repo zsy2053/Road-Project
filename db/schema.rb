@@ -12,10 +12,29 @@
 
 ActiveRecord::Schema.define(version: 20171221195233) do
 
+  create_table "contracts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "site_id"
+    t.string "status", default: "draft", null: false
+    t.string "name"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["site_id"], name: "index_contracts_on_site_id"
+  end
+
   create_table "sites", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "stations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "contract_id"
+    t.string "name"
+    t.string "code"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contract_id"], name: "index_stations_on_contract_id"
   end
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -38,5 +57,7 @@ ActiveRecord::Schema.define(version: 20171221195233) do
     t.index ["site_id"], name: "index_users_on_site_id"
   end
 
+  add_foreign_key "contracts", "sites"
+  add_foreign_key "stations", "contracts"
   add_foreign_key "users", "sites"
 end
