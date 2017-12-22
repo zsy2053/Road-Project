@@ -1,4 +1,6 @@
 class ContractsController < ApplicationController
+  before_action :authenticate_request!
+
   before_action :set_contract, only: [:show, :update, :destroy]
 
   # GET /contracts
