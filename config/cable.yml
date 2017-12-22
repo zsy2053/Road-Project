@@ -1,7 +1,10 @@
+test:
+  adapter: async
+
 development:
   adapter: async
 
-test:
+staging:
   adapter: async
 
 production:
