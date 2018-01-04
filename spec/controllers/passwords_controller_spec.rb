@@ -32,6 +32,24 @@ RSpec.describe PasswordsController, type: :controller do
       user.reload
       expect(user.reset_password_sent_at).to_not be_nil
     end
+
+    it "should raise 412 error if email is blank" do
+      post :forgot, params: {email: ''}
+      expect(response.status).to eq(412)
+      expect(response.body).to eq('{"error":["Email not present"]}')
+    end
+
+    it "should raise 409 error if email format is invalid" do
+      post :forgot, params: {email: '123'}
+      expect(response.status).to eq(409)
+      expect(response.body).to eq('{"error":["Invalid email address format"]}')
+    end
+
+    it "should raise 406 error if email not exists" do
+      post :forgot, params: {email: 'not_exist@robinsonsolutions.com'}
+      expect(response.status).to eq(406)
+      expect(response.body).to eq('{"error":["Email address not found. Please check and try again."]}')
+    end
     
     describe "email" do
       it "should be sent" do
