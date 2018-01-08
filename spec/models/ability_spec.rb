@@ -12,6 +12,8 @@ describe "Ability" do
                      FactoryBot.create(:access, user: users[1], contract: contracts[1]) ]}
   let!(:stations) {[ FactoryBot.create(:station, contract: contracts[0]),
                      FactoryBot.create(:station, contract: contracts[1]) ]}
+  let!(:road_orders) { [FactoryBot.create(:road_order, station: stations[0]),
+                     FactoryBot.create(:road_order, station: stations[1])] }
 
   describe "supervisor" do
 
@@ -42,6 +44,14 @@ describe "Ability" do
 
     it "should not allow supervisors to see the stations for other contracts" do
       cannot_see_the_stations_for_the_contract_they_do_not_belong_to(user)
+    end
+
+    it "should allow supervisors to see the road order for their contract" do
+      can_see_the_road_order_for_the_station_they_belong_to(user)
+    end
+
+    it "should not allow supervisors to see the road order for other contracts" do
+      can_not_see_the_road_order_for_the_station_they_do_not_belong_to(user)
     end
 
     it "should not allow supervisors to see users" do
@@ -261,7 +271,7 @@ describe "Ability" do
       user.super_admin!
     end
 
-    it "should allow super admins to manage everything" do
+    it "should allow super admins to manage everything except road order" do
       ability = Ability.new(user)
 
       expect(ability).to be_able_to(:manage, users[0])
@@ -274,6 +284,16 @@ describe "Ability" do
       expect(ability).to be_able_to(:manage, contracts[1])
       expect(ability).to be_able_to(:manage, sites[0])
       expect(ability).to be_able_to(:manage, sites[1])
+    end
+
+    it "should allow super admins to only read road order" do
+      ability = Ability.new(user)
+
+      expect(ability).to be_able_to(:read, sites[0])
+      expect(ability).to be_able_to(:read, sites[1])
+      expect(ability).not_to be_able_to(:create, RoadOrder)
+      expect(ability).not_to be_able_to(:update, RoadOrder)
+      expect(ability).not_to be_able_to(:delete, RoadOrder)
     end
   end
 
@@ -329,6 +349,24 @@ describe "Ability" do
     expect(ability).not_to be_able_to(:create, stations[1])
     expect(ability).not_to be_able_to(:update, stations[1])
     expect(ability).not_to be_able_to(:delete, stations[1])
+  end
+
+  def can_see_the_road_order_for_the_station_they_belong_to(user)
+    ability = Ability.new(user)
+
+    expect(ability).to be_able_to(:read, road_orders[0])
+    expect(ability).not_to be_able_to(:create, road_orders[0])
+    expect(ability).not_to be_able_to(:update, road_orders[0])
+    expect(ability).not_to be_able_to(:delete, road_orders[0])
+  end
+
+  def can_not_see_the_road_order_for_the_station_they_do_not_belong_to(user)
+    ability = Ability.new(user)
+
+    expect(ability).not_to be_able_to(:read, road_orders[1])
+    expect(ability).not_to be_able_to(:create, road_orders[1])
+    expect(ability).not_to be_able_to(:update, road_orders[1])
+    expect(ability).not_to be_able_to(:delete, road_orders[1])
   end
 
   def cannot_see_users(user)

@@ -16,7 +16,8 @@ class User < ApplicationRecord
 
   belongs_to :site
   has_many :accesses
-
+  has_many :contracts, :through => :accesses
+  has_many :stations, :through => :contracts, :source => :stations
   validates :email, presence: true
   validates :username, presence: true
   validates :password,
