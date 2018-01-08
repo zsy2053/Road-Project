@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171221212727) do
+ActiveRecord::Schema.define(version: 20180104211616) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -29,6 +29,17 @@ ActiveRecord::Schema.define(version: 20171221212727) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["site_id"], name: "index_contracts_on_site_id"
+  end
+
+  create_table "road_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "car_type"
+    t.integer "start_car"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "station_id"
+    t.bigint "author_id"
+    t.index ["author_id"], name: "index_road_orders_on_author_id"
+    t.index ["station_id"], name: "index_road_orders_on_station_id"
   end
 
   create_table "sites", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -70,6 +81,7 @@ ActiveRecord::Schema.define(version: 20171221212727) do
   add_foreign_key "accesses", "contracts"
   add_foreign_key "accesses", "users"
   add_foreign_key "contracts", "sites"
+  add_foreign_key "road_orders", "stations"
   add_foreign_key "stations", "contracts"
   add_foreign_key "users", "sites"
 end

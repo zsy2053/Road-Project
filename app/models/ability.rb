@@ -10,19 +10,23 @@ class Ability
 
       if user.super_admin?
         can :manage, [Site, Station, Contract, User, Access]
-      end
-
-      user.accesses.each do |access|
-        can :read, Station do |station|
-          station.contract == access.contract
-        end
-
+        can :read, [RoadOrder]
+      else
         can :read, Site do |site|
           site == user.site
         end
 
-        can :read, Contract do |contract|
-          contract == access.contract
+        user.accesses.each do |access|
+          can :read, Contract do |contract|
+            contract == access.contract
+          end
+
+          can :read, Station do |station|
+            station.contract == access.contract
+          end
+
+          # method engineers can manage, all other users can only read
+          can user.method_engineer? ? :manage : :read, RoadOrder, station: { contract: access.contract }
         end
 
         if user.admin?
@@ -37,5 +41,4 @@ class Ability
       end
     end
   end
-
 end
