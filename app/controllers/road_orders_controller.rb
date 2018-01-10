@@ -1,5 +1,7 @@
 class RoadOrdersController < ApplicationController
   before_action :authenticate_request!
+  
+  rescue_from CanCan::AccessDenied, with: :not_authorized
 
   # GET /road_orders
   def index
@@ -9,8 +11,14 @@ class RoadOrdersController < ApplicationController
   end
 
   def show
-    authorize! :read, RoadOrder
-    @road_order = RoadOrder.find_by id: params[:id].downcase
+    @road_order = RoadOrder.find(params[:id])
+    authorize! :read, @road_order
     render json: @road_order
+  end
+  
+  protected
+  
+  def not_authorized
+    head :forbidden
   end
 end
