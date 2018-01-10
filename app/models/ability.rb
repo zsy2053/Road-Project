@@ -15,21 +15,21 @@ class Ability
         can :read, Site do |site|
           site == user.site
         end
-        
+
         user.accesses.each do |access|
           # non super admins can only read contracts and stations they have access to
           can :read, Contract, :id => access.contract_id
           can :read, Station, :contract_id => access.contract_id
 
           # method engineers can manage, all other users can only read
-          can user.method_engineer? ? :manage : :read, RoadOrder, :contract_id => access.contract_id          
+          can user.method_engineer? ? :manage : :read, RoadOrder, :contract_id => access.contract_id
         end
-        
+
         if user.admin?
           can :manage, User do |u|
             u.role != 'super_admin' and u.site == user.site
           end
-  
+
           can :manage, Access do |a|
             a.user.role != 'super_admin' and a.user.site == user.site
           end
