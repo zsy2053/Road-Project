@@ -59,6 +59,17 @@ ActiveRecord::Schema.define(version: 20180109225231) do
     t.index ["contract_id"], name: "index_stations_on_contract_id"
   end
 
+  create_table "uploads", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "category"
+    t.string "filename"
+    t.string "content_type"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_uploads_on_user_id"
+  end
+
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "site_id"
     t.string "email", default: "", null: false
@@ -87,5 +98,6 @@ ActiveRecord::Schema.define(version: 20180109225231) do
   add_foreign_key "road_orders", "stations"
   add_foreign_key "road_orders", "users", column: "author_id"
   add_foreign_key "stations", "contracts"
+  add_foreign_key "uploads", "users"
   add_foreign_key "users", "sites"
 end

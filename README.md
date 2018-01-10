@@ -39,6 +39,13 @@ _development_ has been configured to use the {mailcatcher}[http://mailcatcher.me
 * URL_DOMAIN 
 * URL_PORT 
 
+### AWS
+
+* AWS_ACCESS_KEY
+* AWS_SECRET_KEY
+* S3_BUCKET_NAME - name of buckt where uploads will go -- will use prefix _uploads/_
+* AWS_BUCKET_REGION - code for region where bucket was created
+
 ---
 
 This README would normally document whatever steps are necessary to get the
