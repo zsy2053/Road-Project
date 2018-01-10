@@ -6,7 +6,7 @@ class RoadOrder < ApplicationRecord
   validates_presence_of :car_type, :start_car
 # This method handles json render. Should be improved using jbuilder or serializers in future.
   def as_json(options={})
-    super(:only => [:car_type, :start_car],
+    super(:only => [:id, :car_type, :start_car],
           :include => {
             :station => {:only => [:name]},
             :contract => {:only => [:name]}
