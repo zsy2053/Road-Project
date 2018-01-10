@@ -48,4 +48,12 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  
+  # Custom configuration for using AWS S3 through the Fog gem
+  config.x.fog_configuration = {
+    :provider => 'AWS',
+    :aws_access_key_id => ENV['AWS_ACCESS_KEY'],
+    :aws_secret_access_key => ENV['AWS_SECRET_KEY'],
+    :region => ENV['AWS_BUCKET_REGION']
+  }
 end

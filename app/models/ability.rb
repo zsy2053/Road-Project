@@ -35,6 +35,9 @@ class Ability
           end
         end
       end
+      
+      # a user can manage their own uploads
+      can :manage, Upload, user_id: user.id 
     end
   end
 end

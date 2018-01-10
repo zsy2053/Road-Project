@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :contracts
   resources :sites
   resources :road_orders, only: [:index]
+  resources :uploads, only: [:show, :create]
   post 'password/forgot', to: 'passwords#forgot'
   post 'password/reset', to: 'passwords#reset'
 end

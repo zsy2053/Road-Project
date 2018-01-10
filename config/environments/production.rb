@@ -91,4 +91,12 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+  
+  # Custom configuration for using AWS S3 through the Fog gem
+  config.x.fog_configuration = {
+    :provider => 'AWS',
+    :aws_access_key_id => ENV['AWS_ACCESS_KEY'],
+    :aws_secret_access_key => ENV['AWS_SECRET_KEY'],
+    :region => ENV['AWS_BUCKET_REGION']
+  }
 end

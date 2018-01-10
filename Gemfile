@@ -22,12 +22,16 @@ gem 'puma', '~> 3.7'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-gem 'rack-cors'
 gem 'devise', '~> 4.2'
 gem 'devise-jwt', '~> 0.4.3'
 gem 'jwt'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'cancancan', '~> 2.0'
+
+gem 'active_model_serializers'
+
+gem 'fog-aws'
+gem 'mime-types'
 
 # environment variable configuration management
 gem 'figaro'

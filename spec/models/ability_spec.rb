@@ -1,6 +1,43 @@
 require 'rails_helper'
 require "cancan/matchers"
 
+RSpec.shared_examples "a user who can manage uploads" do |role|
+  let(:this_user) { FactoryBot.build_stubbed(:user, role: role) }
+  let(:ability) { Ability.new(this_user) }
+  let(:upload) { FactoryBot.build_stubbed(:upload, user: this_user) }
+  
+  let(:other_user) { FactoryBot.build_stubbed(:user) }
+  let(:other_upload) { FactoryBot.build_stubbed(:upload, user: other_user) }
+  
+  it "can create new uploads" do
+    expect(ability).to be_able_to(:create, Upload)
+  end
+  
+  it "can read own uploads" do
+    expect(ability).to be_able_to(:read, upload)
+  end
+  
+  it "cannot read someone else's upload" do
+    expect(ability).to_not be_able_to(:read, other_upload)
+  end
+  
+  it "can update own uploads" do
+    expect(ability).to be_able_to(:update, upload)
+  end
+  
+  it "cannot update someone else's upload" do
+    expect(ability).to_not be_able_to(:update, other_upload)
+  end
+  
+  it "can delete own uploads" do
+    expect(ability).to be_able_to(:delete, upload)
+  end
+  
+  it "cannot delete someone else's upload" do
+    expect(ability).to_not be_able_to(:delete, other_upload)
+  end
+end
+
 describe "Ability" do
 
   let!(:sites) {[ FactoryBot.create(:site), FactoryBot.create(:site) ]}
@@ -57,6 +94,8 @@ describe "Ability" do
     it "should not allow supervisors to see users" do
       cannot_see_users(user)
     end
+    
+    it_should_behave_like "a user who can manage uploads", "supervisor"
   end
 
   describe "planner" do
@@ -93,6 +132,8 @@ describe "Ability" do
     it "should not allow planners to see users" do
       cannot_see_users(user)
     end
+    
+    it_should_behave_like "a user who can manage uploads", "planner"
   end
 
   describe "method_engineer" do
@@ -129,6 +170,8 @@ describe "Ability" do
     it "should not allow method_engineers to see users" do
       cannot_see_users(user)
     end
+    
+    it_should_behave_like "a user who can manage uploads", "method_engineer"
   end
 
   describe "quality" do
@@ -165,6 +208,8 @@ describe "Ability" do
     it "should not allow qualitys to see users" do
       cannot_see_users(user)
     end
+    
+    it_should_behave_like "a user who can manage uploads", "quality"
   end
 
   describe "station" do
@@ -201,6 +246,8 @@ describe "Ability" do
     it "should not allow stations to see users" do
       cannot_see_users(user)
     end
+    
+    it_should_behave_like "a user who can manage uploads", "station"
   end
 
   describe "admin" do
@@ -263,6 +310,8 @@ describe "Ability" do
       expect(ability).to be_able_to(:manage, accesses[0])
       expect(ability).not_to be_able_to(:manage, accesses[1])
     end
+    
+    it_should_behave_like "a user who can manage uploads", "admin"
   end
 
   describe "super_admin" do
@@ -285,6 +334,8 @@ describe "Ability" do
       expect(ability).to be_able_to(:manage, sites[0])
       expect(ability).to be_able_to(:manage, sites[1])
     end
+    
+    it_should_behave_like "a user who can manage uploads", "super_admin"
 
     it "should allow super admins to only read road order" do
       ability = Ability.new(user)
