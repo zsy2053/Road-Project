@@ -14,7 +14,7 @@ RSpec.describe RoadOrdersController, type: :controller do
     context "for anonymous user" do
       it "returns a failed response without login" do
         subject
-        expect(response).to have_http_status(401)
+        expect(response).to be_unauthorized
       end
     end
 
@@ -27,7 +27,7 @@ RSpec.describe RoadOrdersController, type: :controller do
 
       it "returns a success response if login." do
         subject
-        expect(response).to have_http_status(200)
+        expect(response).to be_success
       end
 
       it "returns correct number of road order." do
@@ -44,35 +44,47 @@ RSpec.describe RoadOrdersController, type: :controller do
         result = JSON.parse(response.body)[0]
         expect(result['car_type']).to eq('A')
         expect(result['start_car']).to eq(1)
-        expect(result['station']).to_not be_nil
-        expect(result['station']['name']).to eq('station 1')
-        expect(result['contract']).to_not be_nil
-        expect(result['contract']['name']).to eq('contract 1')
+        expect(result['station']).to eq('station 1')
+        expect(result['contract']).to eq('contract 1')
       end
     end
   end
 
   describe "GET #show" do
+    # road order the user has access to
     let!(:contract1) { FactoryBot.create(:contract, :name => "contract 1") }
     let!(:station1) { FactoryBot.create(:station, :contract_id => contract1.id, :name => "station 1") }
     let!(:road_order1) { FactoryBot.create(:road_order, :station_id => station1.id, :car_type => "A", :start_car => 1) }
     
-    context "To get the detail about the road order" do
+    # arbitrary road order the user does not have access to
+    let!(:road_order2) { FactoryBot.create(:road_order) }
+    
+    context "for anonymous user" do
+      it "returns unauthorized" do
+        get :show, params: { id: road_order1.id }
+        expect(response).to be_unauthorized
+      end
+    end
+    
+    context "for authenticated user" do
       before(:each) do
         @user = FactoryBot.create(:user)
         FactoryBot.create(:access, :contract_id => contract1.id, :user_id => @user.id)
         add_jwt_header(request, @user)
       end
 
-      it "returns the corresponding road order." do
-        get :show, params: {id: road_order1.id}
+      it "returns the road order if user has access" do
+        get :show, params: { id: road_order1.id }
         result = JSON.parse(response.body)
         expect(result['car_type']). to eq('A')
         expect(result['start_car']). to eq(1)
-        expect(result['station']). to_not be_nil
-        expect(result['station']['name']).to eq('station 1')
-        expect(result['contract']).to_not be_nil
-        expect(result['contract']['name']).to eq('contract 1')
+        expect(result['station']).to eq('station 1')
+        expect(result['contract']).to eq('contract 1')
+      end
+
+      it "doesn't return the road order if user has no access" do
+        get :show, params: { id: road_order2.id }
+        expect(response).to be_forbidden
       end
     end
   end
