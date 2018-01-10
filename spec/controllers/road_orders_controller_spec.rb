@@ -3,15 +3,14 @@ require 'rails_helper'
 RSpec.describe RoadOrdersController, type: :controller do
 
   describe "GET #index" do
-
     let!(:contract1) { FactoryBot.create(:contract, :name => "contract 1") }
     let!(:contract2) { FactoryBot.create(:contract, :name => "contract 2") }
     let!(:station1) { FactoryBot.create(:station, :contract_id => contract1.id, :name => "station 1") }
     let!(:station2) { FactoryBot.create(:station, :contract_id => contract2.id, :name => "station 2") }
     let!(:road_order1) { FactoryBot.create(:road_order, :station_id => station1.id, :car_type => "A", :start_car => 1) }
     let!(:road_order2) { FactoryBot.create(:road_order, :station_id => station2.id, :car_type => "B", :start_car => 2) }
+  
     subject { get :index, {} }
-
     context "for anonymous user" do
       it "returns a failed response without login" do
         subject
@@ -49,7 +48,31 @@ RSpec.describe RoadOrdersController, type: :controller do
         expect(result['station']['name']).to eq('station 1')
         expect(result['contract']).to_not be_nil
         expect(result['contract']['name']).to eq('contract 1')
+      end
+    end
+  end
 
+  describe "GET #show" do
+    let!(:contract1) { FactoryBot.create(:contract, :name => "contract 1") }
+    let!(:station1) { FactoryBot.create(:station, :contract_id => contract1.id, :name => "station 1") }
+    let!(:road_order1) { FactoryBot.create(:road_order, :station_id => station1.id, :car_type => "A", :start_car => 1) }
+    
+    context "To get the detail about the road order" do
+      before(:each) do
+        @user = FactoryBot.create(:user)
+        FactoryBot.create(:access, :contract_id => contract1.id, :user_id => @user.id)
+        add_jwt_header(request, @user)
+      end
+
+      it "returns the corresponding road order." do
+        get :show, params: {id: road_order1.id}
+        result = JSON.parse(response.body)
+        expect(result['car_type']). to eq('A')
+        expect(result['start_car']). to eq(1)
+        expect(result['station']). to_not be_nil
+        expect(result['station']['name']).to eq('station 1')
+        expect(result['contract']).to_not be_nil
+        expect(result['contract']['name']).to eq('contract 1')
       end
     end
   end
