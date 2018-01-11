@@ -17,12 +17,10 @@ class Ability
         end
 
         user.accesses.each do |access|
-          # non super admins can only read contracts and stations they have access to
+          # non super admins can only read contracts, stations, and road orders they have access to
           can :read, Contract, :id => access.contract_id
           can :read, Station, :contract_id => access.contract_id
-
-          # method engineers can manage, all other users can only read
-          can user.method_engineer? ? :manage : :read, RoadOrder, :contract_id => access.contract_id
+          can :read, RoadOrder, :contract_id => access.contract_id
         end
 
         if user.admin?

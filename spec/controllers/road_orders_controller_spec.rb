@@ -11,10 +11,11 @@ RSpec.describe RoadOrdersController, type: :controller do
     let!(:road_order2) { FactoryBot.create(:road_order, :station_id => station2.id, :car_type => "B", :start_car => 2) }
   
     subject { get :index, {} }
+    
     context "for anonymous user" do
       it "returns a failed response without login" do
         subject
-        expect(response).to be_unauthorized
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
@@ -27,7 +28,7 @@ RSpec.describe RoadOrdersController, type: :controller do
 
       it "returns a success response if login." do
         subject
-        expect(response).to be_success
+        expect(response).to have_http_status(:success)
       end
 
       it "returns correct number of road order." do
@@ -62,7 +63,7 @@ RSpec.describe RoadOrdersController, type: :controller do
     context "for anonymous user" do
       it "returns unauthorized" do
         get :show, params: { id: road_order1.id }
-        expect(response).to be_unauthorized
+        expect(response).to have_http_status(:unauthorized)
       end
     end
     
@@ -72,7 +73,7 @@ RSpec.describe RoadOrdersController, type: :controller do
         FactoryBot.create(:access, :contract_id => contract1.id, :user_id => @user.id)
         add_jwt_header(request, @user)
       end
-
+      
       it "returns the road order if user has access" do
         get :show, params: { id: road_order1.id }
         result = JSON.parse(response.body)
@@ -84,7 +85,12 @@ RSpec.describe RoadOrdersController, type: :controller do
 
       it "doesn't return the road order if user has no access" do
         get :show, params: { id: road_order2.id }
-        expect(response).to be_forbidden
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "returns the corresponding road order." do
+        get :show, params: { id: road_order2.id }
+        expect(response).to have_http_status(:forbidden)
       end
     end
   end

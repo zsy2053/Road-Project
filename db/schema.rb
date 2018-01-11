@@ -31,6 +31,25 @@ ActiveRecord::Schema.define(version: 20180111010912) do
     t.index ["site_id"], name: "index_contracts_on_site_id"
   end
 
+  create_table "definitions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "road_order_id"
+    t.string "work_location"
+    t.string "day"
+    t.string "shift"
+    t.string "sequence_number"
+    t.string "name"
+    t.text "description"
+    t.integer "expected_duration"
+    t.integer "breaks"
+    t.time "expected_start"
+    t.time "expected_end"
+    t.boolean "serialized"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "positions"
+    t.index ["road_order_id"], name: "index_definitions_on_road_order_id"
+  end
+
   create_table "road_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "car_type"
     t.integer "start_car"
@@ -39,6 +58,9 @@ ActiveRecord::Schema.define(version: 20180111010912) do
     t.bigint "station_id"
     t.bigint "author_id"
     t.bigint "contract_id"
+    t.string "file_path"
+    t.string "positions"
+    t.string "day_shifts"
     t.index ["author_id"], name: "index_road_orders_on_author_id"
     t.index ["contract_id"], name: "index_road_orders_on_contract_id"
     t.index ["station_id"], name: "index_road_orders_on_station_id"
@@ -96,6 +118,7 @@ ActiveRecord::Schema.define(version: 20180111010912) do
   add_foreign_key "accesses", "contracts"
   add_foreign_key "accesses", "users"
   add_foreign_key "contracts", "sites"
+  add_foreign_key "definitions", "road_orders"
   add_foreign_key "road_orders", "contracts"
   add_foreign_key "road_orders", "stations"
   add_foreign_key "road_orders", "users", column: "author_id"

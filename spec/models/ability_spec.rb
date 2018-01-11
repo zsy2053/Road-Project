@@ -38,6 +38,97 @@ RSpec.shared_examples "a user who can manage uploads" do |role|
   end
 end
 
+RSpec.shared_examples "a user who can only create road orders" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:station) { FactoryBot.build_stubbed(:station, contract: contract) }
+  let!(:road_order) { FactoryBot.build_stubbed(:road_order, station: station, contract: contract) }
+  
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  
+  let(:ability) { Ability.new(this_user) }
+  
+  it "can create a new road order" do
+    expect(ability).to be_able_to(:create, RoadOrder)
+  end
+  
+  it "cannot read road orders for an accessible contract" do
+    expect(ability).to_not be_able_to(:read, road_order)
+  end
+  
+  it "cannot update a road order" do
+    expect(ability).to_not be_able_to(:update, RoadOrder)
+  end
+  
+  it "cannot delete a road order" do
+    expect(ability).to_not be_able_to(:delete, RoadOrder)
+  end
+  
+  it "cannot do anything with any other class" do
+    expect(ability).to_not be_able_to([:create, :read, :update, :delete], [Site, Station, Contract, User, Access])
+  end
+end
+
+RSpec.shared_examples "a user who can only read their road orders" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:station) { FactoryBot.build_stubbed(:station, contract: contract) }
+  let!(:road_order) { FactoryBot.build_stubbed(:road_order, station: station, contract: contract) }
+  
+  let!(:other_contract) { FactoryBot.create(:contract) }
+  let!(:other_station) { FactoryBot.build_stubbed(:station, contract: other_contract) }
+  let!(:other_road_order) { FactoryBot.build_stubbed(:road_order, station: other_station, contract: other_contract) }
+  
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  
+  let(:ability) { Ability.new(this_user) }
+  
+  it "can read road orders for an accessible contract" do
+    expect(ability).to be_able_to(:read, road_order)
+  end
+  
+  it "cannot read road orders for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:read, other_road_order)
+  end
+end
+
+RSpec.shared_examples "a user who can read all road orders" do |role|
+  let!(:this_user) { FactoryBot.build_stubbed(:user, role: role) }
+  let!(:ability) { Ability.new(this_user) }
+  let!(:road_order) { FactoryBot.build_stubbed(:road_order) }
+  let!(:other_road_order) { FactoryBot.build_stubbed(:road_order) }
+  
+  before(:each) do
+    expect(this_user.accesses).to be_empty
+  end
+  
+  it "can read road orders for an inaccessible contract" do
+    expect(ability).to be_able_to(:read, road_order)
+    expect(ability).to be_able_to(:read, other_road_order)
+  end
+end
+
+RSpec.shared_examples "a user who cannot modify road orders" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:station) { FactoryBot.build_stubbed(:station, contract: contract) }
+  let!(:road_order) { FactoryBot.build_stubbed(:road_order, station: station, contract: contract) }
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  let!(:ability) { Ability.new(this_user) }
+  
+  it "cannot create a new road order" do
+    expect(ability).to_not be_able_to(:create, RoadOrder)
+  end
+  
+  it "cannot update a road order" do
+    expect(ability).to_not be_able_to(:update, RoadOrder)
+  end
+  
+  it "cannot delete a road order" do
+    expect(ability).to_not be_able_to(:delete, RoadOrder)
+  end
+end
+
 describe "Ability" do
 
   let!(:sites) {[ FactoryBot.create(:site), FactoryBot.create(:site) ]}
@@ -83,19 +174,14 @@ describe "Ability" do
       cannot_see_the_stations_for_the_contract_they_do_not_belong_to(user)
     end
 
-    it "should allow supervisors to see the road order for their contract" do
-      can_see_the_road_order_for_the_station_they_belong_to(user)
-    end
-
-    it "should not allow supervisors to see the road order for other contracts" do
-      can_not_see_the_road_order_for_the_station_they_do_not_belong_to(user)
-    end
-
     it "should not allow supervisors to see users" do
       cannot_see_users(user)
     end
     
     it_should_behave_like "a user who can manage uploads", "supervisor"
+    
+    it_should_behave_like "a user who can only read their road orders", "supervisor"
+    it_should_behave_like "a user who cannot modify road orders", "supervisor"
   end
 
   describe "planner" do
@@ -134,6 +220,9 @@ describe "Ability" do
     end
     
     it_should_behave_like "a user who can manage uploads", "planner"
+    
+    it_should_behave_like "a user who can only read their road orders", "planner"
+    it_should_behave_like "a user who cannot modify road orders", "planner"
   end
 
   describe "method_engineer" do
@@ -172,6 +261,9 @@ describe "Ability" do
     end
     
     it_should_behave_like "a user who can manage uploads", "method_engineer"
+    
+    it_should_behave_like "a user who can only read their road orders", "method_engineer"
+    it_should_behave_like "a user who cannot modify road orders", "method_engineer"
   end
 
   describe "quality" do
@@ -210,6 +302,9 @@ describe "Ability" do
     end
     
     it_should_behave_like "a user who can manage uploads", "quality"
+    
+    it_should_behave_like "a user who can only read their road orders", "quality"
+    it_should_behave_like "a user who cannot modify road orders", "quality"
   end
 
   describe "station" do
@@ -248,6 +343,9 @@ describe "Ability" do
     end
     
     it_should_behave_like "a user who can manage uploads", "station"
+    
+    it_should_behave_like "a user who can only read their road orders", "station"
+    it_should_behave_like "a user who cannot modify road orders", "station"
   end
 
   describe "admin" do
@@ -312,6 +410,9 @@ describe "Ability" do
     end
     
     it_should_behave_like "a user who can manage uploads", "admin"
+    
+    it_should_behave_like "a user who can only read their road orders", "admin"
+    it_should_behave_like "a user who cannot modify road orders", "admin"
   end
 
   describe "super_admin" do
@@ -336,16 +437,11 @@ describe "Ability" do
     end
     
     it_should_behave_like "a user who can manage uploads", "super_admin"
-
-    it "should allow super admins to only read road order" do
-      ability = Ability.new(user)
-
-      expect(ability).to be_able_to(:read, sites[0])
-      expect(ability).to be_able_to(:read, sites[1])
-      expect(ability).not_to be_able_to(:create, RoadOrder)
-      expect(ability).not_to be_able_to(:update, RoadOrder)
-      expect(ability).not_to be_able_to(:delete, RoadOrder)
-    end
+    
+    it_should_behave_like "a user who can manage uploads", "super_admin"
+    
+    it_should_behave_like "a user who can read all road orders", "super_admin"
+    it_should_behave_like "a user who cannot modify road orders", "super_admin"
   end
 
   def can_read_the_site_they_belong_to(user)
@@ -400,24 +496,6 @@ describe "Ability" do
     expect(ability).not_to be_able_to(:create, stations[1])
     expect(ability).not_to be_able_to(:update, stations[1])
     expect(ability).not_to be_able_to(:delete, stations[1])
-  end
-
-  def can_see_the_road_order_for_the_station_they_belong_to(user)
-    ability = Ability.new(user)
-
-    expect(ability).to be_able_to(:read, road_orders[0])
-    expect(ability).not_to be_able_to(:create, road_orders[0])
-    expect(ability).not_to be_able_to(:update, road_orders[0])
-    expect(ability).not_to be_able_to(:delete, road_orders[0])
-  end
-
-  def can_not_see_the_road_order_for_the_station_they_do_not_belong_to(user)
-    ability = Ability.new(user)
-
-    expect(ability).not_to be_able_to(:read, road_orders[1])
-    expect(ability).not_to be_able_to(:create, road_orders[1])
-    expect(ability).not_to be_able_to(:update, road_orders[1])
-    expect(ability).not_to be_able_to(:delete, road_orders[1])
   end
 
   def cannot_see_users(user)
