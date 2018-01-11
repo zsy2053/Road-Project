@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180109225231) do
+ActiveRecord::Schema.define(version: 20180111010912) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -67,6 +67,8 @@ ActiveRecord::Schema.define(version: 20180109225231) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.integer "progress"
+    t.integer "total"
     t.index ["user_id"], name: "index_uploads_on_user_id"
   end
 
