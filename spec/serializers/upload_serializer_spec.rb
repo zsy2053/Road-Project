@@ -8,7 +8,16 @@ RSpec.describe UploadSerializer, type: :serializer do
   let(:subject) { JSON.parse(serialization.to_json) }
   
   context "basic upload" do
-    let(:upload) { FactoryBot.build_stubbed(:upload, id: 11, category: 'roadorders', filename: 'filename.ext', content_type: 'text/plain', status: 'uploading', user: user) }
+    let(:upload) { FactoryBot.build_stubbed(:upload,
+      id: 11,
+      category: 'roadorders',
+      filename: 'filename.ext',
+      content_type: 'text/plain',
+      status: 'uploading',
+      user: user,
+      progress: 10,
+      total: 30)
+    }
     
     it 'only contains expected keys' do
       expect(subject.keys).to contain_exactly(
@@ -17,7 +26,9 @@ RSpec.describe UploadSerializer, type: :serializer do
         'user_id',
         'content_type',
         'category',
-        'path'
+        'path',
+        'progress',
+        'total'
       )
     end
     
@@ -44,10 +55,28 @@ RSpec.describe UploadSerializer, type: :serializer do
     it 'returns expected category' do
       expect(subject['category']).to eq('roadorders')
     end
+    
+    it 'returns expected progress' do
+      expect(subject['progress']).to eq(10)
+    end
+    
+    it 'returns expected total' do
+      expect(subject['total']).to eq(30)
+    end
   end
   
   context "upload with transient attributes" do
-    let(:upload) { FactoryBot.build_stubbed(:upload, id: 11, category: 'roadorders', filename: 'filename.ext', status: 'uploading', user: user, signed_url: 'signed_url') }
+    let(:upload) { FactoryBot.build_stubbed(:upload,
+      id: 11,
+      category: 'roadorders',
+      filename: 'filename.ext',
+      content_type: 'text/plain',
+      status: 'uploading',
+      user: user,
+      progress: 10,
+      total: 30,
+      signed_url: 'signed_url')
+    }
     
     it 'only contains expected keys' do
       expect(subject.keys).to contain_exactly(
@@ -57,7 +86,9 @@ RSpec.describe UploadSerializer, type: :serializer do
         'path',
         'content_type',
         'category',
-        'signed_url'
+        'signed_url',
+        'progress',
+        'total'
       )
     end
     
@@ -87,6 +118,14 @@ RSpec.describe UploadSerializer, type: :serializer do
     
     it 'returns expected category' do
       expect(subject['category']).to eq('roadorders')
+    end
+    
+    it 'returns expected progress' do
+      expect(subject['progress']).to eq(10)
+    end
+    
+    it 'returns expected total' do
+      expect(subject['total']).to eq(30)
     end
   end
 end
