@@ -9,7 +9,8 @@ class RoadOrdersController < ApplicationController
     @road_orders = RoadOrder.includes(:station, :contract).accessible_by(current_ability)
     render json: @road_orders
   end
-
+  
+  # GET /road_orders/1
   def show
     @road_order = RoadOrder.find(params[:id])
     authorize! :read, @road_order
