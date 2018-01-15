@@ -12,9 +12,7 @@ class Ability
         can :manage, [Site, Station, Contract, User, Access]
         can :read, [RoadOrder]
       else
-        can :read, Site do |site|
-          site == user.site
-        end
+        can :read, Site, :id => user.site_id
 
         user.accesses.each do |access|
           # non super admins can only read contracts, stations, and road orders they have access to

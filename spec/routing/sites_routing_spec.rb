@@ -7,26 +7,24 @@ RSpec.describe SitesController, type: :routing do
       expect(:get => "/sites").to route_to("sites#index")
     end
 
-
     it "routes to #show" do
-      expect(:get => "/sites/1").to route_to("sites#show", :id => "1")
+      expect(:get => "/sites/1").not_to route_to("sites#show", :id => "1")
     end
 
-
     it "routes to #create" do
-      expect(:post => "/sites").to route_to("sites#create")
+      expect(:post => "/sites").not_to route_to("sites#create")
     end
 
     it "routes to #update via PUT" do
-      expect(:put => "/sites/1").to route_to("sites#update", :id => "1")
+      expect(:put => "/sites/1").not_to route_to("sites#update", :id => "1")
     end
 
     it "routes to #update via PATCH" do
-      expect(:patch => "/sites/1").to route_to("sites#update", :id => "1")
+      expect(:patch => "/sites/1").not_to route_to("sites#update", :id => "1")
     end
 
     it "routes to #destroy" do
-      expect(:delete => "/sites/1").to route_to("sites#destroy", :id => "1")
+      expect(:delete => "/sites/1").not_to route_to("sites#destroy", :id => "1")
     end
 
   end

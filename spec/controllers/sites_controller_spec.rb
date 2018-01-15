@@ -2,105 +2,59 @@ require 'rails_helper'
 
 RSpec.describe SitesController, type: :controller do
 
-  # This should return the minimal set of attributes required to create a valid
-  # Site. As you add validations to Site, be sure to
-  # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
-
-  let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
-  }
-
-  # This should return the minimal set of values that should be in the session
-  # in order to pass any filters (e.g. authentication) defined in
-  # SitesController. Be sure to keep this updated too.
-  let(:valid_session) { {} }
-
   describe "GET #index" do
-    it "returns a success response" do
-      site = Site.create! valid_attributes
-      get :index, params: {}, session: valid_session
-      expect(response).to be_success
-    end
-  end
+    let!(:site1) { FactoryBot.create(:site, :name => "site 1") }
+    let!(:site2) { FactoryBot.create(:site, :name => "site 2") }
 
-  describe "GET #show" do
-    it "returns a success response" do
-      site = Site.create! valid_attributes
-      get :show, params: {id: site.to_param}, session: valid_session
-      expect(response).to be_success
-    end
-  end
+    subject { get :index, {} }
 
-  describe "POST #create" do
-    context "with valid params" do
-      it "creates a new Site" do
-        expect {
-          post :create, params: {site: valid_attributes}, session: valid_session
-        }.to change(Site, :count).by(1)
-      end
-
-      it "renders a JSON response with the new site" do
-
-        post :create, params: {site: valid_attributes}, session: valid_session
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(site_url(Site.last))
+    context "for anonymous user" do
+      it "returns a failed response without login" do
+        subject
+        expect(response).to have_http_status(:unauthorized)
       end
     end
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the new site" do
-
-        post :create, params: {site: invalid_attributes}, session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
-      end
-    end
-  end
-
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
-      }
-
-      it "updates the requested site" do
-        site = Site.create! valid_attributes
-        put :update, params: {id: site.to_param, site: new_attributes}, session: valid_session
-        site.reload
-        skip("Add assertions for updated state")
+    context "for authorized non-super admin user" do
+      before(:each) do
+        @authorized_user = FactoryBot.create(:supervisor_user, :site_id => site1.id)
+        add_jwt_header(request, @authorized_user)
       end
 
-      it "renders a JSON response with the site" do
-        site = Site.create! valid_attributes
+      it "returns a success response if login." do
+        subject
+        expect(response).to have_http_status(:success)
+      end
 
-        put :update, params: {id: site.to_param, site: valid_attributes}, session: valid_session
-        expect(response).to have_http_status(:ok)
-        expect(response.content_type).to eq('application/json')
+      it "returns only their own site" do
+        # There should be 2 sites inside the database.
+        subject
+        result = assigns(:sites)
+        expect(result.count).to eq(1)
+        expect(result).to include(site1)
+        expect(result).to_not include(site2)
       end
     end
 
-    context "with invalid params" do
-      it "renders a JSON response with errors for the site" do
-        site = Site.create! valid_attributes
+    context "for authorized super admin user" do
+      before(:each) do
+        @authorized_user = FactoryBot.create(:super_admin_user, :site_id => site1.id)
+        add_jwt_header(request, @authorized_user)
+      end
 
-        put :update, params: {id: site.to_param, site: invalid_attributes}, session: valid_session
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json')
+      it "returns a success response if login." do
+        subject
+        expect(response).to have_http_status(:success)
+      end
+
+      it "returns only their own site" do
+        # There should be 2 sites inside the database.
+        subject
+        result = assigns(:sites)
+        expect(result.count).to eq(2)
+        expect(result).to include(site1)
+        expect(result).to include(site2)
       end
     end
   end
-
-  describe "DELETE #destroy" do
-    it "destroys the requested site" do
-      site = Site.create! valid_attributes
-      expect {
-        delete :destroy, params: {id: site.to_param}, session: valid_session
-      }.to change(Site, :count).by(-1)
-    end
-  end
-
 end

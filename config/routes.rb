@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   devise_for :users
   resources :stations
   resources :contracts
-  resources :sites
+  resources :sites, only: [:index]
   resources :road_orders, only: [:index, :show, :create]
   resources :uploads, only: [:show, :create]
 
