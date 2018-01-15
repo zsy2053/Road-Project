@@ -128,6 +128,40 @@ RSpec.shared_examples "a user who cannot modify road orders" do |role|
   end
 end
 
+RSpec.shared_examples "a user who can manage all sites" do |role|
+  it "can manage sites" do
+    ability = Ability.new(FactoryBot.create(:user, role: role))
+    expect(ability).to be_able_to(:manage, Site)
+  end
+end
+
+RSpec.shared_examples "a user who can only read their own site" do |role|
+  let!(:site) { FactoryBot.create(:site) }
+  let!(:other_site) { FactoryBot.create(:site) }
+  let!(:this_user) { FactoryBot.create(:user, site: site, role: role) }
+  let!(:ability) { Ability.new(this_user) }
+  
+  it "can read their site" do
+    expect(ability).to be_able_to(:read, site)
+  end
+  
+  it "cannot read other sites" do
+    expect(ability).to_not be_able_to(:read, other_site)
+  end
+  
+  it "cannot create sites" do
+    expect(ability).to_not be_able_to(:create, Site)
+  end
+  
+  it "cannot update sites" do
+    expect(ability).to_not be_able_to(:update, Site)
+  end
+  
+  it "cannot destroy sites" do
+    expect(ability).to_not be_able_to(:destroy, Site)
+  end
+end
+
 describe "Ability" do
 
   let!(:sites) {[ FactoryBot.create(:site), FactoryBot.create(:site) ]}
@@ -177,6 +211,8 @@ describe "Ability" do
       cannot_see_users(user)
     end
     
+    it_should_behave_like "a user who can only read their own site", "supervisor"
+    
     it_should_behave_like "a user who can manage uploads", "supervisor"
     
     it_should_behave_like "a user who can only read their road orders", "supervisor"
@@ -217,6 +253,8 @@ describe "Ability" do
     it "should not allow planners to see users" do
       cannot_see_users(user)
     end
+    
+    it_should_behave_like "a user who can only read their own site", "planner"
     
     it_should_behave_like "a user who can manage uploads", "planner"
     
@@ -259,6 +297,8 @@ describe "Ability" do
       cannot_see_users(user)
     end
     
+    it_should_behave_like "a user who can only read their own site", "method_engineer"
+    
     it_should_behave_like "a user who can manage uploads", "method_engineer"
     
     it_should_behave_like "a user who can only read their road orders", "method_engineer"
@@ -300,6 +340,8 @@ describe "Ability" do
       cannot_see_users(user)
     end
     
+    it_should_behave_like "a user who can only read their own site", "quality"
+    
     it_should_behave_like "a user who can manage uploads", "quality"
     
     it_should_behave_like "a user who can only read their road orders", "quality"
@@ -340,6 +382,8 @@ describe "Ability" do
     it "should not allow stations to see users" do
       cannot_see_users(user)
     end
+    
+    it_should_behave_like "a user who can only read their own site", "station"
     
     it_should_behave_like "a user who can manage uploads", "station"
     
@@ -408,6 +452,8 @@ describe "Ability" do
       expect(ability).not_to be_able_to(:manage, accesses[1])
     end
     
+    it_should_behave_like "a user who can only read their own site", "admin"
+    
     it_should_behave_like "a user who can manage uploads", "admin"
     
     it_should_behave_like "a user who can only read their road orders", "admin"
@@ -434,6 +480,8 @@ describe "Ability" do
       expect(ability).to be_able_to(:manage, sites[0])
       expect(ability).to be_able_to(:manage, sites[1])
     end
+    
+    it_should_behave_like  "a user who can manage all sites", "super_admin"
     
     it_should_behave_like "a user who can manage uploads", "super_admin"
     

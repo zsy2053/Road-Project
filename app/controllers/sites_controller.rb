@@ -1,53 +1,18 @@
 class SitesController < ApplicationController
   before_action :authenticate_request!
 
-  before_action :set_site, only: [:show, :update, :destroy]
-
+  rescue_from CanCan::AccessDenied, with: :not_authorized
+  
   # GET /sites
   def index
-    @sites = Site.all
-
+    authorize! :read, Site
+    @sites = Site.accessible_by(current_ability)
     render json: @sites
   end
-
-  # GET /sites/1
-  def show
-    render json: @site
+  
+  protected
+  
+  def not_authorized
+    head :forbidden
   end
-
-  # POST /sites
-  def create
-    @site = Site.new(site_params)
-
-    if @site.save
-      render json: @site, status: :created, location: @site
-    else
-      render json: @site.errors, status: :unprocessable_entity
-    end
-  end
-
-  # PATCH/PUT /sites/1
-  def update
-    if @site.update(site_params)
-      render json: @site
-    else
-      render json: @site.errors, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /sites/1
-  def destroy
-    @site.destroy
-  end
-
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_site
-      @site = Site.find(params[:id])
-    end
-
-    # Only allow a trusted parameter "white list" through.
-    def site_params
-      params.require(:site).permit(:name)
-    end
 end
