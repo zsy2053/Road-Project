@@ -12,7 +12,7 @@ RSpec.describe RoadOrdersController, type: :routing do
     end
 
     it "routes to #create" do
-      expect(:post => "/road_orders").not_to route_to("road_orders#create")
+      expect(:post => "/road_orders").to route_to("road_orders#create")
     end
 
     it "routes to #update via PUT" do

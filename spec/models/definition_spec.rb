@@ -16,7 +16,7 @@ RSpec.describe Definition, type: :model do
   it { should validate_presence_of(:shift) }
   
   it { should validate_presence_of(:expected_duration) }
-  it { should validate_numericality_of(:expected_duration).only_integer.is_greater_than(0) }
+  it { should validate_numericality_of(:expected_duration).only_integer.is_greater_than_or_equal_to(0) }
   
   it { should validate_presence_of(:breaks) }
   it { should validate_numericality_of(:breaks).only_integer.is_greater_than_or_equal_to(0) }
@@ -32,6 +32,24 @@ RSpec.describe Definition, type: :model do
     
     it "should not accept nil" do
       expect(FactoryBot.build(:definition, :serialized => nil)).to_not be_valid
+    end
+  end
+  
+  describe :expected_start do
+    it "should be a dateless time" do
+      timeString = "13:14:15"
+      definition = FactoryBot.build(:definition, :expected_start => timeString)
+      # must convert to string for comparison
+      expect(definition.expected_start.to_s).to eq(timeString)
+    end
+  end
+  
+  describe :expected_end do
+    it "should be a dateless time" do
+      timeString = "13:14:15"
+      definition = FactoryBot.build(:definition, :expected_end => timeString)
+      # must convert to string for comparison
+      expect(definition.expected_end.to_s).to eq(timeString)
     end
   end
   

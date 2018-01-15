@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180111010912) do
+ActiveRecord::Schema.define(version: 20180112001934) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 20180111010912) do
     t.string "file_path"
     t.string "positions"
     t.string "day_shifts"
+    t.string "import"
     t.index ["author_id"], name: "index_road_orders_on_author_id"
     t.index ["contract_id"], name: "index_road_orders_on_contract_id"
     t.index ["station_id"], name: "index_road_orders_on_station_id"

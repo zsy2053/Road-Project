@@ -38,22 +38,29 @@ RSpec.shared_examples "a user who can manage uploads" do |role|
   end
 end
 
-RSpec.shared_examples "a user who can only create road orders" do |role|
+RSpec.shared_examples "a user who can create but not modify road orders for their contracts" do |role|
   let!(:contract) { FactoryBot.create(:contract) }
-  let!(:station) { FactoryBot.build_stubbed(:station, contract: contract) }
-  let!(:road_order) { FactoryBot.build_stubbed(:road_order, station: station, contract: contract) }
+  let!(:other_contract) { FactoryBot.create(:contract) }
+  
+  # road order objects use 'build' so the are not considered to be persisted
+  let(:road_order) { FactoryBot.build(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
+  let(:other_road_order) { FactoryBot.build(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
   
   let!(:this_user) { FactoryBot.create(:user, role: role) }
   let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
   
   let(:ability) { Ability.new(this_user) }
   
-  it "can create a new road order" do
+  it "cannot create a road order for an inaccessible contract" do
     expect(ability).to be_able_to(:create, RoadOrder)
+    expect(other_road_order).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_road_order)
   end
   
-  it "cannot read road orders for an accessible contract" do
-    expect(ability).to_not be_able_to(:read, road_order)
+  it "can create a road order for an accessible contract" do
+    expect(ability).to be_able_to(:create, RoadOrder)
+    expect(road_order).to_not be_persisted
+    expect(ability).to be_able_to(:create, road_order)
   end
   
   it "cannot update a road order" do
@@ -63,20 +70,14 @@ RSpec.shared_examples "a user who can only create road orders" do |role|
   it "cannot delete a road order" do
     expect(ability).to_not be_able_to(:delete, RoadOrder)
   end
-  
-  it "cannot do anything with any other class" do
-    expect(ability).to_not be_able_to([:create, :read, :update, :delete], [Site, Station, Contract, User, Access])
-  end
 end
 
 RSpec.shared_examples "a user who can only read their road orders" do |role|
   let!(:contract) { FactoryBot.create(:contract) }
-  let!(:station) { FactoryBot.build_stubbed(:station, contract: contract) }
-  let!(:road_order) { FactoryBot.build_stubbed(:road_order, station: station, contract: contract) }
-  
   let!(:other_contract) { FactoryBot.create(:contract) }
-  let!(:other_station) { FactoryBot.build_stubbed(:station, contract: other_contract) }
-  let!(:other_road_order) { FactoryBot.build_stubbed(:road_order, station: other_station, contract: other_contract) }
+
+  let(:road_order) { FactoryBot.build_stubbed(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
+  let(:other_road_order) { FactoryBot.build_stubbed(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
   
   let!(:this_user) { FactoryBot.create(:user, role: role) }
   let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
@@ -110,8 +111,6 @@ end
 
 RSpec.shared_examples "a user who cannot modify road orders" do |role|
   let!(:contract) { FactoryBot.create(:contract) }
-  let!(:station) { FactoryBot.build_stubbed(:station, contract: contract) }
-  let!(:road_order) { FactoryBot.build_stubbed(:road_order, station: station, contract: contract) }
   let!(:this_user) { FactoryBot.create(:user, role: role) }
   let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
   let!(:ability) { Ability.new(this_user) }
@@ -263,7 +262,7 @@ describe "Ability" do
     it_should_behave_like "a user who can manage uploads", "method_engineer"
     
     it_should_behave_like "a user who can only read their road orders", "method_engineer"
-    it_should_behave_like "a user who cannot modify road orders", "method_engineer"
+    it_should_behave_like "a user who can create but not modify road orders for their contracts", "method_engineer"
   end
 
   describe "quality" do

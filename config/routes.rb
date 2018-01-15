@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :stations
   resources :contracts
   resources :sites
-  resources :road_orders, only: [:index, :show]
+  resources :road_orders, only: [:index, :show, :create]
   resources :uploads, only: [:show, :create]
 
   post 'password/forgot', to: 'passwords#forgot'

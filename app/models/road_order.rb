@@ -7,7 +7,8 @@ class RoadOrder < ApplicationRecord
   
   validates_presence_of :car_type, :start_car
   
-  has_many :definitions
+  has_many :definitions, inverse_of: :road_order
+  accepts_nested_attributes_for :definitions
   
   # distinct list of the positions available for this road order
   serialize :positions, Array
@@ -15,19 +16,12 @@ class RoadOrder < ApplicationRecord
   # hash describing the days and respective shifts spanned by this road order
   serialize :day_shifts, Hash
   
+  # stores the file used to generate this road order
+  mount_uploader :import, RoadOrderImportUploader
+  
   # helper function to get the days spanned by this road order irrespective of shifts
   def days
     return self.day_shifts.keys
-  end
-  
-  # This method handles json render. Should be improved using jbuilder or serializers in future.
-  def as_json(options={})
-    super(:only => [:id, :car_type, :start_car],
-          :include => {
-            :station => {:only => [:name]},
-            :contract => {:only => [:name]}
-          }
-    )
   end
 
   def set_contract

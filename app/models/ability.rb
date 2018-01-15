@@ -21,6 +21,9 @@ class Ability
           can :read, Contract, :id => access.contract_id
           can :read, Station, :contract_id => access.contract_id
           can :read, RoadOrder, :contract_id => access.contract_id
+          
+          # method engineers can also create road orders for their contracts
+          can :create, RoadOrder, :contract_id => access.contract_id if user.method_engineer?
         end
 
         if user.admin?
