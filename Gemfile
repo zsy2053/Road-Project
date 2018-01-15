@@ -32,6 +32,10 @@ gem 'active_model_serializers'
 
 gem 'fog-aws'
 gem 'mime-types'
+gem 'carrierwave', '~> 1.0'
+gem 'rmagick'
+
+gem 'dateless_time'
 
 # environment variable configuration management
 gem 'figaro'

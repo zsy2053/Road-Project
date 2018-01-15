@@ -20,3 +20,6 @@
 
 # Ignore Eclipse configuration file
 .project
+
+# Ignore carrierwave files folder
+/public/uploads/

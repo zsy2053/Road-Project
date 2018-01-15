@@ -94,4 +94,114 @@ RSpec.describe RoadOrdersController, type: :controller do
       end
     end
   end
+  
+  describe "POST #create" do
+    let(:station) { FactoryBot.create(:station) }
+    let(:author) { FactoryBot.create(:user) }
+    
+    let(:valid_attributes) {
+      {
+        car_type: 'Coach',
+        start_car: 123,
+        station_id: station.id,
+        file_path: 'file_path',
+        positions: [ 'A1', 'B1' ],
+        definitions_attributes: [
+          {
+            "name" => "Mvt/Assy",
+            "description" => "Description",
+            "sequence_number" => "Seq#",
+            "day" => "1",
+            "shift" => "1",
+            "work_location" => "Work Location",
+            "positions" => [ "B2" ],
+            "expected_duration" => "60",
+            "breaks" => "0",
+            "expected_start" => "08:00:00",
+            "expected_end" => "09:00:00",
+            "serialized" => 'false'
+          }
+        ],
+        day_shifts: {
+          "1" => [ "1", "2" ],
+          "2" => [ "1", "2" ]
+        }
+      }
+    }
+    
+    let(:invalid_attributes) {
+      { apple: 'banana' }
+    }
+    
+    context "for anonymous user" do
+      it "returns unauthorized" do
+        post :create, params: { road_order: valid_attributes }
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+    
+    context "for authenticated user" do
+      before(:each) do
+        @user = author
+        add_jwt_header(request, @user)
+        
+        @ability = Ability.new(@user)
+        expect(@controller).to receive(:current_ability).and_return(@ability)
+      end
+      
+      describe "with access" do
+        it "accepts valid input" do
+          @ability.can :create, RoadOrder
+          post :create, params: { road_order: valid_attributes }
+          expect(response).to have_http_status(:created)
+          expect(response.content_type).to eq('application/json')
+          
+          result = RoadOrder.last
+          expect(response.location).to eq(road_order_url(result))
+          
+          # check road order attributes
+          expect(result.car_type).to eq('Coach')
+          expect(result.start_car).to eq(123)
+          expect(result.station.id).to eq(station.id)
+          expect(result.author.id).to eq(author.id)
+          # TODO expect(result.file_path).to eq('file_path')
+          expect(result.positions).to eq([ 'A1', 'B1' ])
+          expect(result.day_shifts).to eq({ "1" => [ "1", "2" ], "2" => [ "1", "2" ] })
+          
+          definitionResult = Definition.last
+          expect(result.definitions.size).to eq(1)
+          expect(result.definitions.first).to eq(definitionResult)
+          
+          # check definition attributes
+          expect(definitionResult.name).to eq("Mvt/Assy")
+          expect(definitionResult.description).to eq("Description")
+          expect(definitionResult.sequence_number).to eq("Seq#")
+          expect(definitionResult.day).to eq("1")
+          expect(definitionResult.shift).to eq("1")
+          expect(definitionResult.work_location).to eq("Work Location")
+          expect(definitionResult.positions).to eq([ "B2" ])
+          expect(definitionResult.expected_duration).to eq(60)
+          expect(definitionResult.breaks).to eq(0)
+          expect(definitionResult.expected_start.to_s).to eq("08:00:00")
+          expect(definitionResult.expected_end.to_s).to eq("09:00:00")
+          expect(definitionResult.serialized).to eq(false)
+        end
+        
+        it "rejects invalid input" do
+          @ability.can :create, RoadOrder
+          post :create, params: { road_order: invalid_attributes }
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.content_type).to eq('application/json')
+        end
+      end
+      
+      describe "without access" do
+        it "fails" do
+          @ability.cannot :create, RoadOrder
+          post :create, params: { road_order: valid_attributes }
+          expect(response).to have_http_status(:forbidden)
+        end
+      end
+    end
+  end
 end
