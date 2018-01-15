@@ -6,7 +6,6 @@
 # station2         = FactoryBot.create(:station, :name => "Bloor", :contract_id => contract1.id)
 # station3         = FactoryBot.create(:station, :name => "Dundas", :contract_id => contract2.id)
 # station4         = FactoryBot.create(:station, :name => "Union", :contract_id => contract2.id)
-
 # supervisor1      = FactoryBot.create(:supervisor_user, :site_id => site.id, :username => "supervisor1")
 # super_admin1     = FactoryBot.create(:super_admin_user, :site_id => site.id, :username => "super_admin1")
 # admin1           = FactoryBot.create(:admin_user, :site_id => site.id, :username => "admin1")
@@ -20,11 +19,13 @@
 # access2          = FactoryBot.create(:access, :user_id => method_engineer1.id, :contract_id => contract2.id)
 # access3          = FactoryBot.create(:access, :user_id => method_engineer2.id, :contract_id => contract1.id)
 
-# road_order1      = FactoryBot.create(:road_order, :car_type => "Ferrari", :start_car => 1, :station_id => station1.id, :author_id => method_engineer1.id)
-# road_order2      = FactoryBot.create(:road_order, :car_type => "Porsche", :start_car => 2, :station_id => station1.id, :author_id => method_engineer1.id)
-# road_order3      = FactoryBot.create(:road_order, :car_type => "Rolls-Royce ", :start_car => 3, :station_id => station2.id, :author_id => method_engineer1.id)
-# road_order4      = FactoryBot.create(:road_order, :car_type => "Lamborghini", :start_car => 4, :station_id => station2.id, :author_id => method_engineer1.id)
-# road_order5      = FactoryBot.create(:road_order, :car_type => "Aston Martin", :start_car => 5, :station_id => station3.id, :author_id => method_engineer1.id)
-# road_order6      = FactoryBot.create(:road_order, :car_type => "Tesla", :start_car => 6, :station_id => station3.id, :author_id => method_engineer1.id)
-# road_order7      = FactoryBot.create(:road_order, :car_type => "Bentley", :start_car => 7, :station_id => station4.id, :author_id => method_engineer1.id)
-# road_order8      = FactoryBot.create(:road_order, :car_type => "Maserati", :start_car => 8, :station_id => station4.id, :author_id => method_engineer1.id)
+# (1..9).each do |i|
+# 	FactoryBot.create(:road_order, :car_type => "Ferrari_#{i}", :start_car => 1, :station_id => station1.id, :author_id => method_engineer1.id)
+# 	FactoryBot.create(:road_order, :car_type => "Porsche_#{i}", :start_car => 2, :station_id => station1.id, :author_id => method_engineer1.id)
+# 	FactoryBot.create(:road_order, :car_type => "Rolls-Royce_#{i} ", :start_car => 3, :station_id => station2.id, :author_id => method_engineer1.id)
+# 	FactoryBot.create(:road_order, :car_type => "Lamborghini_#{i}", :start_car => 4, :station_id => station2.id, :author_id => method_engineer1.id)
+# 	FactoryBot.create(:road_order, :car_type => "Aston Martin_#{i}", :start_car => 5, :station_id => station3.id, :author_id => method_engineer1.id)
+# 	FactoryBot.create(:road_order, :car_type => "Tesla_#{i}", :start_car => 6, :station_id => station3.id, :author_id => method_engineer1.id)
+# 	FactoryBot.create(:road_order, :car_type => "Bentley_#{i}", :start_car => 7, :station_id => station4.id, :author_id => method_engineer1.id)
+# 	FactoryBot.create(:road_order, :car_type => "Maserati_#{i}", :start_car => 8, :station_id => station4.id, :author_id => method_engineer1.id)
+# end
