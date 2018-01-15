@@ -5,20 +5,22 @@ class StationsController < ApplicationController
 
   # GET /stations
   def index
-    @stations = Station.all
+    authorize! :read, Station
+    @stations = Station.accessible_by(current_ability)
 
     render json: @stations
   end
 
   # GET /stations/1
   def show
+    authorize! :read, @station
     render json: @station
   end
 
   # POST /stations
   def create
     @station = Station.new(station_params)
-
+    authorize! :create, @station
     if @station.save
       render json: @station, status: :created, location: @station
     else
@@ -28,6 +30,7 @@ class StationsController < ApplicationController
 
   # PATCH/PUT /stations/1
   def update
+    authorize! :update, @station
     if @station.update(station_params)
       render json: @station
     else
@@ -37,6 +40,7 @@ class StationsController < ApplicationController
 
   # DELETE /stations/1
   def destroy
+    authorize! :destroy, @station
     @station.destroy
   end
 
