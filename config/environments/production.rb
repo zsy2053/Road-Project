@@ -95,8 +95,7 @@ Rails.application.configure do
   # Custom configuration for using AWS S3 through the Fog gem
   config.x.fog_configuration = {
     :provider => 'AWS',
-    :aws_access_key_id => ENV['AWS_ACCESS_KEY'],
-    :aws_secret_access_key => ENV['AWS_SECRET_KEY'],
+    :use_iam_profile  => true,
     :region => ENV['AWS_BUCKET_REGION']
   }
 end
