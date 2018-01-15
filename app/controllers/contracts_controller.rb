@@ -5,20 +5,21 @@ class ContractsController < ApplicationController
 
   # GET /contracts
   def index
-    @contracts = Contract.all
-
+    authorize! :read, Contract
+    @contracts = Contract.accessible_by(current_ability)
     render json: @contracts
   end
 
   # GET /contracts/1
   def show
+    authorize! :read, @contract
     render json: @contract
   end
 
   # POST /contracts
   def create
     @contract = Contract.new(contract_params)
-
+    authorize! :create, @contract
     if @contract.save
       render json: @contract, status: :created, location: @contract
     else
@@ -28,6 +29,7 @@ class ContractsController < ApplicationController
 
   # PATCH/PUT /contracts/1
   def update
+    authorize! :update, @contract
     if @contract.update(contract_params)
       render json: @contract
     else
@@ -37,6 +39,7 @@ class ContractsController < ApplicationController
 
   # DELETE /contracts/1
   def destroy
+    authorize! :destroy, @contract
     @contract.destroy
   end
 
