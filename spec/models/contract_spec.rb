@@ -6,7 +6,10 @@ RSpec.describe Contract, type: :model do
   it "has a valid factory" do
     expect(FactoryBot.build(:contract)).to be_valid
   end
-
+  
+  it { should validate_presence_of :minimum_offset }
+  it { should validate_numericality_of(:minimum_offset).only_integer.is_greater_than(0) }
+  
   describe "status attribute" do
     before(:each) do
       @contract = FactoryBot.create(:contract)

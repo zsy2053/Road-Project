@@ -168,7 +168,7 @@ RSpec.describe ContractsController, type: :controller do
 
   describe "POST #create" do
     let(:site) {FactoryBot.create(:site)}
-    let(:valid_attributes) { { :site_id => site.id } }
+    let(:valid_attributes) { { :site_id => site.id, :minimum_offset => 4, :status => 'draft' } }
     subject { post :create, params: { :contract => valid_attributes } }
 
     context "for anonymous user" do
@@ -224,7 +224,7 @@ RSpec.describe ContractsController, type: :controller do
       let(:attributes_with_wrong_status) { {:site_id => site.id, :status => "on_fire" } }
 
       before(:each) do
-        @user = FactoryBot.create(:super_admin_user)
+        @user = FactoryBot.create(:super_admin_user, :site_id => site.id)
         add_jwt_header(request, @user)
       end
       it "throws an ActionController::ParameterMissing error by sending empty attributes if login a user with ability :create to contract." do
@@ -245,7 +245,7 @@ RSpec.describe ContractsController, type: :controller do
   describe "PUT #update" do
     let(:site) { FactoryBot.create(:site) }
     let!(:contract) { FactoryBot.create(:contract) }
-    let(:valid_attributes) { { :id => contract.id, :site_id => site.id, :name => "T_T" } }
+    let(:valid_attributes) { { :id => contract.id, :site_id => site.id, :name => "T_T", :minimum_offset => 4 } }
     subject { put :update, params: { :id => contract.id, :contract => valid_attributes } }
 
     context "for anonymous user" do
