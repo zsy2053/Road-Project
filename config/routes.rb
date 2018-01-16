@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   post 'login' => 'authentication#authenticate_user'
   devise_for :users
+  resources :users
   resources :stations
   resources :contracts
   resources :sites, only: [:index]

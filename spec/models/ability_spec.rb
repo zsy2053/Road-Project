@@ -437,15 +437,27 @@ describe "Ability" do
     end
 
     it "should allow admins to manage users in their sites" do
-      super_admin = FactoryBot.create(:user, site: sites[0], role: 'super_admin')
+      supervisor = FactoryBot.create(:user, site: sites[0], role: 'supervisor')
+      quality = FactoryBot.create(:user, site: sites[0], role: 'quality')
+      method_engineer = FactoryBot.create(:user, site: sites[0], role: 'method_engineer')
+      planner = FactoryBot.create(:user, site: sites[0], role: 'planner')
+      admin = FactoryBot.create(:user, site: sites[0], role: 'admin')
+      station = FactoryBot.create(:user, site: sites[0], role: 'station')
+      users[1].role = 'supervisor'
       ability = Ability.new(user)
 
-      expect(ability).to be_able_to(:manage, users[0])
+      expect(ability).to be_able_to(:manage, supervisor)
+      expect(ability).to be_able_to(:manage, quality)
+      expect(ability).to be_able_to(:manage, method_engineer)
+      expect(ability).to be_able_to(:manage, admin)
+      expect(ability).to be_able_to(:manage, planner)
+      expect(ability).to be_able_to(:manage, station)
       expect(ability).not_to be_able_to(:manage, users[1])
     end
 
     it "should allow admins to manage accesses in their sites who are not super admins" do
-      super_admin = FactoryBot.create(:user, site: sites[0], role: 'super_admin')
+      #super_admin = FactoryBot.create(:user, site: sites[0], role: 'super_admin')
+      users[0].role = 'supervisor'
       ability = Ability.new(user)
 
       expect(ability).to be_able_to(:manage, accesses[0])
