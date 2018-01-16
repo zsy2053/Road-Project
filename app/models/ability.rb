@@ -25,13 +25,9 @@ class Ability
         end
 
         if user.admin?
-          can :manage, User do |u|
-            u.role != 'super_admin' and u.site == user.site
-          end
-
-          can :manage, Access do |a|
-            a.user.role != 'super_admin' and a.user.site == user.site
-          end
+          admin_accessible_roles = [ "admin", "supervisor", "planner", "method_engineer", "quality", "station" ]
+          can :manage, User, :site_id => user.site_id, :role => admin_accessible_roles
+          can :manage, Access, user: { site_id: user.site_id, role: admin_accessible_roles }
         end
       end
       
