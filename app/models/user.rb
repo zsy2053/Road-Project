@@ -18,6 +18,8 @@ class User < ApplicationRecord
   has_many :accesses
   has_many :contracts, :through => :accesses
   has_many :stations, :through => :contracts, :source => :stations
+  validates :first_name, presence: true
+  validates :last_name, presence: true
   validates :email, presence: true
   validates :username, presence: true
   validates :password,

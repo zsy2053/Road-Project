@@ -2,6 +2,8 @@ class UsersController < ApplicationController
   before_action :authenticate_request!
 
   before_action :set_user, only: [:show, :update, :destroy]
+  
+  rescue_from CanCan::AccessDenied, with: :not_authorized
 
   # GET /users
   def index
@@ -9,6 +11,12 @@ class UsersController < ApplicationController
     @users = User.includes(accesses: :contract).accessible_by(current_ability)
     
     render json: @users
+  end
+  
+  protected
+  
+  def not_authorized
+    head :forbidden
   end
   
   private

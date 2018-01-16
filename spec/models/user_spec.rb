@@ -6,26 +6,14 @@ RSpec.describe User, type: :model do
   it "has a valid factory" do
     expect(FactoryBot.build(:user)).to be_valid
   end
-
-  describe "email attribute" do
-    it "should not be nil" do
-      expect(FactoryBot.build(:user, email: nil)).to_not be_valid
-    end
-
-    it "cannot be blank" do
-      expect(FactoryBot.build(:user, email: "")).to_not be_valid
-    end
-  end
-
-  describe "username attribute" do
-    it "should not be nil" do
-      expect(FactoryBot.build(:user, username: nil)).to_not be_valid
-    end
-
-    it "cannot be blank" do
-      expect(FactoryBot.build(:user, username: "")).to_not be_valid
-    end
-  end
+  
+  it { should validate_presence_of :first_name }
+  
+  it { should validate_presence_of :last_name }
+  
+  it { should validate_presence_of :email }
+  
+  it { should validate_presence_of :username }
 
   describe "password attribute" do
     it "cannot be nil" do
