@@ -7,7 +7,7 @@ class RoadOrder < ApplicationRecord
   
   validates_presence_of :car_type, :start_car
   
-  has_many :definitions, inverse_of: :road_order
+  has_many :definitions, inverse_of: :road_order, :dependent => :destroy
   accepts_nested_attributes_for :definitions
   
   # distinct list of the positions available for this road order

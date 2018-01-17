@@ -15,7 +15,7 @@ RSpec.describe RoadOrder, type: :model do
   
   it { should validate_presence_of :start_car }
   
-  it { should have_many :definitions }
+  it { should have_many(:definitions).dependent(:destroy) }
   
   # Rails 5 prevents the following from being used
   #it { should serialize :positions }

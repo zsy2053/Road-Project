@@ -46,6 +46,9 @@ _development_ has been configured to use the {mailcatcher}[http://mailcatcher.me
 * S3_BUCKET_NAME - name of buckt where uploads will go -- will use prefix _uploads/_
 * AWS_BUCKET_REGION - code for region where bucket was created
 
+Additionally, in _development_ and _test_ the following is used to keep developer work separate -- leave blank in other environments
+* S3_PREFIX -- username with trailing slash, for example _spai/_
+
 ---
 
 This README would normally document whatever steps are necessary to get the

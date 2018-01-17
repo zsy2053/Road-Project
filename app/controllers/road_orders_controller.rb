@@ -14,7 +14,7 @@ class RoadOrdersController < ApplicationController
   def show
     @road_order = RoadOrder.find(params[:id])
     authorize! :read, @road_order
-    render json: @road_order
+    render json: @road_order, serializer: RoadOrderDetailsSerializer
   end
   
   # POST /road_orders
