@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180116230323) do
+ActiveRecord::Schema.define(version: 20180117150756) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -39,20 +39,20 @@ ActiveRecord::Schema.define(version: 20180116230323) do
 
   create_table "definitions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "road_order_id"
-    t.string "work_location"
-    t.string "day"
-    t.string "shift"
-    t.string "sequence_number"
-    t.string "name"
-    t.text "description"
-    t.integer "expected_duration"
-    t.integer "breaks"
-    t.time "expected_start"
-    t.time "expected_end"
-    t.boolean "serialized"
+    t.string "work_location", null: false
+    t.string "day", null: false
+    t.string "shift", null: false
+    t.string "sequence_number", null: false
+    t.string "name", null: false
+    t.text "description", null: false
+    t.integer "expected_duration", null: false
+    t.integer "breaks", null: false
+    t.time "expected_start", null: false
+    t.time "expected_end", null: false
+    t.boolean "serialized", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "positions"
+    t.string "positions", null: false
     t.index ["road_order_id"], name: "index_definitions_on_road_order_id"
   end
 
