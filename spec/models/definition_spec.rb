@@ -16,9 +16,24 @@ RSpec.describe Definition, type: :model do
   it { should validate_presence_of(:shift) }
   
   it { should validate_presence_of(:expected_duration) }
+
+  it { should validate_presence_of(:work_location) }
+
+  it { should validate_presence_of(:description) }
+
+  it { should validate_presence_of(:breaks) }
+
+  it { should validate_presence_of(:expected_start) }
+
+  it { should validate_presence_of(:expected_end) }
+
+
+  it { should validate_presence_of(:positions) }
+
   it { should validate_numericality_of(:expected_duration).only_integer.is_greater_than_or_equal_to(0) }
   
   it { should validate_presence_of(:breaks) }
+  
   it { should validate_numericality_of(:breaks).only_integer.is_greater_than_or_equal_to(0) }
   
   describe :serialized do
