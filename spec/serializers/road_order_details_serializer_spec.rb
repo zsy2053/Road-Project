@@ -108,7 +108,10 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
     end
     
     it "has expected author" do
-      expect(subject['author']).to eq(JSON.parse(road_order.author.to_json))
+      # ensure it uses the UserSerializer to serialize the author
+      uSerializer = UserSerializer.new(road_order.author)
+      uSerialization = ActiveModelSerializers::Adapter.create(uSerializer)
+      expect(subject['author']).to eq(JSON.parse(uSerialization.to_json))
     end
   end
   
@@ -201,7 +204,10 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
     end
     
     it "has expected author" do
-      expect(subject['author']).to eq(JSON.parse(road_order.author.to_json))
+      # ensure it uses the UserSerializer to serialize the author
+      uSerializer = UserSerializer.new(road_order.author)
+      uSerialization = ActiveModelSerializers::Adapter.create(uSerializer)
+      expect(subject['author']).to eq(JSON.parse(uSerialization.to_json))
     end
     
     it "has expected definitions" do
