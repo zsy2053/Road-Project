@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, type: :controller do
-
+  
   describe "GET #index" do
     let(:site) { FactoryBot.create(:site) }
     let!(:user1) { FactoryBot.create(:supervisor_user, site: site) }

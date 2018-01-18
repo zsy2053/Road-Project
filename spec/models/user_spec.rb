@@ -91,4 +91,34 @@ RSpec.describe User, type: :model do
       expect{ @user.role = "A" }.to raise_error(ArgumentError)
     end
   end
+  
+  describe :suspended do
+    it "should accept 'true'" do
+      expect(FactoryBot.build(:user, :suspended => true)).to be_valid
+    end
+    
+    it "should accept 'false'" do
+      expect(FactoryBot.build(:user, :suspended => false)).to be_valid
+    end
+    
+    it "should not accept nil" do
+      expect(FactoryBot.build(:user, :suspended => nil)).to_not be_valid
+    end
+    
+    it "should default to false when initialized" do
+      expect(User.new().suspended).to eq(false)
+    end
+  end
+  
+  describe :active_for_authentication? do
+    it "should return true if suspended attribute is false" do
+      user = FactoryBot.build_stubbed(:supervisor_user, suspended: false)
+      expect(user.active_for_authentication?).to eq(true)
+    end
+    
+    it "should return true if suspended attribute is false" do
+      user = FactoryBot.build_stubbed(:supervisor_user, suspended: true)
+      expect(user.active_for_authentication?).to eq(false)
+    end
+  end
 end
