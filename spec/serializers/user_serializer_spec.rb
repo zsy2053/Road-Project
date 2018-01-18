@@ -19,7 +19,8 @@ RSpec.describe UserSerializer, type: :serializer do
       'role',
       'site_id',
       'site_name',
-      'contracts'
+      'contracts',
+      'suspended'
     )
   end
   

@@ -11,13 +11,23 @@ class UsersController < ApplicationController
     @users = User.includes(accesses: :contract).accessible_by(current_ability)
     render json: @users
   end
-
+  
+  # GET /users/1
   def show
     @user = User.find(params[:id])
     authorize! :read, @user
     render json: @user, serializer: UserSerializer
   end
-
+  
+  # PATCH/PUT /users/1
+  def update
+    if @user.update(user_params)
+      render json: @user
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
+  end
+  
   protected
 
   def not_authorized
@@ -32,6 +42,6 @@ class UsersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def user_params
-      params.require(:user).permit(:username, :email, :site_id)
+      params.require(:user).permit(:username, :first_name, :last_name, :role, :email, :site_id, :employee_id, :phone, :suspended, :ignore_password)
     end
 end
