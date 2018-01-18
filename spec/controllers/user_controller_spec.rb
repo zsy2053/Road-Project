@@ -105,4 +105,56 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
+  describe "POST #create" do
+    let(:site) { FactoryBot.create(:site) }
+    
+    let(:valid_attributes) {
+      { username: "admin1", password: "Qwer1234", email: "test123@gmail.com", site_id: site.id, role: "super_admin", first_name: "testname", last_name: "testlast", employee_id: "654322", phone: "640154568" }
+    }
+    
+    let(:invalid_attributes) {
+      { username: '' }
+    }
+
+    context "for anonymous user" do
+      it "returns unauthorized" do
+        get :create, params: { user: valid_attributes }
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context "for super admin" do
+      before(:each) do
+        @super_admin = FactoryBot.create(:super_admin_user, site: site)
+        add_jwt_header(request, @super_admin)
+      end
+
+      it "post succeed when post with valid attributes" do
+        post :create, params: {user: valid_attributes}
+        expect(response). to have_http_status(:created)
+      end
+
+      it "post failed when post with invalid attributes" do
+        post :create, params: {user: invalid_attributes}
+        expect(response). to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context "for admin" do
+      before(:each) do
+        @admin = FactoryBot.create(:admin_user, site: site)
+        add_jwt_header(request, @admin)
+      end
+
+      it "post failed when post with valid attributes but super_admin role" do
+        post :create, params: {user: valid_attributes}
+        expect(response). to have_http_status(:forbidden)
+      end
+
+      it "post failed when post with invalid attributes" do
+        post :create, params: {user: invalid_attributes}
+        expect(response). to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
 end
