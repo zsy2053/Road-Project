@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :sites, only: [:index]
   resources :road_orders, only: [:index, :show, :create]
   resources :uploads, only: [:show, :create]
+  resources :accesses, only: [:create, :destroy]
 
   post 'password/forgot', to: 'passwords#forgot'
   post 'password/reset', to: 'passwords#reset'
