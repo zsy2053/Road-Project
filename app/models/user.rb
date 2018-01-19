@@ -13,11 +13,11 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :registerable, :timeoutable and :omniauthable
-  devise :database_authenticatable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :recoverable, :rememberable, :trackable, :validatable
 
   belongs_to :site
   has_many :accesses
+  accepts_nested_attributes_for :accesses  
   has_many :contracts, :through => :accesses
   has_many :stations, :through => :contracts, :source => :stations
   validates :first_name, presence: true
@@ -41,4 +41,5 @@ class User < ApplicationRecord
   def init
     self.suspended = false if self.suspended.nil?
   end
+  
 end
