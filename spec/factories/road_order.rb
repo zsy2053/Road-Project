@@ -2,9 +2,13 @@ FactoryBot.define do
   factory :road_order do
     station
     association :author, factory: :user
-    car_type "B"
+    car_type "BILEVEL"
     start_car 1
-    
+    work_centre "Bonding"
+    sequence(:module) { "B" } # using sequence as a workaround because 'module' is a reserved word in rails
+    positions []
+    day_shifts {}
+
     after(:build) do |road_order|
       road_order.contract ||= road_order.station.contract
     end

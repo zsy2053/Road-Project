@@ -54,6 +54,8 @@ class RoadOrdersController < ApplicationController
       :car_type,
       :start_car,
       :import,
+      :work_centre,
+      :module,
       { positions: [] },
       { day_shifts: {} },
       { definitions_attributes: [

@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe AccessesController, type: :controller do
 	describe "#Create" do
-		let(:user){FactoryBot.create(:station_user)}
-		let(:contract){FactoryBot.create(:contract)}
-		subject { post :create, params: { :access => {:contract_id=> contract.id, :user_id=> user.id} } }
+		let(:user) { FactoryBot.create(:supervisor_user) }
+		let(:contract) { FactoryBot.create(:contract) }
+		subject { post :create, params: { :access => { :contract_id => contract.id, :user_id => user.id } } }
 		
 		before(:each) do
 		  @user = FactoryBot.create(:super_admin_user)
@@ -18,7 +18,7 @@ RSpec.describe AccessesController, type: :controller do
 	end
 
 	describe "delete" do
-		let(:access){FactoryBot.create(:access)}
+		let!(:access) { FactoryBot.create(:access) }
 		subject { delete :destroy, params: { :id => access.id } }
 
 		before(:each) do
@@ -27,8 +27,7 @@ RSpec.describe AccessesController, type: :controller do
 		end
 
 		it "can delete access" do
-			subject
-			expect{ delete :destroy, params: { :id => access.id } }.to change(Access, :count).by(-1)
+			expect{ subject }.to change(Access, :count).by(-1)
 		end
 	end
 end
