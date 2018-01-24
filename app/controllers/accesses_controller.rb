@@ -1,5 +1,6 @@
 class AccessesController < ApplicationController
 	before_action :authenticate_request!
+	
 	def create
 		@access = Access.new(access_params)
 		authorize! :create, @access

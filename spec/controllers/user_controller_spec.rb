@@ -136,7 +136,48 @@ RSpec.describe UsersController, type: :controller do
 
       it "post failed when post with invalid attributes" do
         post :create, params: {user: invalid_attributes}
-        expect(response). to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+      
+      context "with contracts" do
+        let!(:contract) { FactoryBot.create(:contract, site: site) }
+        let(:valid_attributes_with_contract) {
+          { username: "admin1",
+            password: "Qwer1234",
+            email: "test123@gmail.com",
+            site_id: site.id, 
+            role: "super_admin", 
+            first_name: "testname", 
+            last_name: "testlast", 
+            employee_id: "654322", 
+            phone: "640154568",
+            contract_ids: [ contract.id ]
+          }
+        }
+        
+        before(:each) do
+          expect(User.where(username: "admin1")).to be_empty
+        end
+        
+        subject { post :create, params: { user: valid_attributes_with_contract } }
+        
+        it "succeeds" do
+          subject
+          expect(response).to have_http_status(:created)
+        end
+        
+        it "adds a user" do
+          expect { subject }.to change{ User.count }.by(1)
+          result = User.last
+          expect(result.username).to eq("admin1")
+        end
+        
+        it "adds an access" do
+          expect { subject }.to change{ Access.count }.by(1)
+          result = Access.last
+          expect(result.user).to eq(User.last)
+          expect(result.contract_id).to eq(contract.id)
+        end
       end
     end
 
@@ -154,6 +195,122 @@ RSpec.describe UsersController, type: :controller do
       it "post failed when post with invalid attributes" do
         post :create, params: {user: invalid_attributes}
         expect(response). to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
+
+  describe "PATCH #update" do
+    let(:site) { FactoryBot.create(:site) }
+    let!(:user) { FactoryBot.create(:supervisor_user, first_name: "first 1", last_name: "last 1") }
+    
+    let(:valid_attributes) {
+      { first_name: "first 2", last_name: "last 2", ignore_password: true }
+    }
+    
+    let(:invalid_attributes) {
+      { username: '', ignore_password: true }
+    }
+
+    context "for anonymous user" do
+      it "returns unauthorized" do
+        patch :update, params: { :id => user.id, :user => valid_attributes }
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context "for super admin" do
+      before(:each) do
+        @super_admin = FactoryBot.create(:super_admin_user, site: site)
+        add_jwt_header(request, @super_admin)
+      end
+
+      it "post succeed when post with valid attributes" do
+        patch :update, params: {:id => user.id, :user => valid_attributes}
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "post failed when post with invalid attributes" do
+        patch :update, params: {:id => user.id, :user => invalid_attributes}
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+      
+      context "with contracts" do
+        let!(:contract1) { FactoryBot.create(:contract, site: site) }
+        let!(:contract2) { FactoryBot.create(:contract, site: site) }
+        let!(:contract3) { FactoryBot.create(:contract, site: site) }
+        let!(:access1) { FactoryBot.create(:access, contract: contract1, user: user)}
+        let!(:access2) { FactoryBot.create(:access, contract: contract2, user: user)}
+        let(:valid_attributes_with_contract) {
+          { first_name: "first 2",
+            last_name: "last 2",
+            ignore_password: true,
+            contract_ids: [ contract2.id, contract3.id ]
+          }
+        }
+        
+        subject { patch :update, params: { :id => user.id, :user => valid_attributes_with_contract } }
+
+        it "succeeds" do
+          subject
+          expect(response).to have_http_status(:success)
+        end
+        
+        it "updates the user" do
+          subject
+          result = User.find_by_id(user.id)
+          expect(result.first_name).to eq("first 2")
+          expect(result.last_name).to eq("last 2")
+        end
+        
+        it "modifies access records" do
+          subject
+          expect(Access.find_by(user: user, contract: contract3)).to be_present
+          expect(Access.find_by(user: user, contract: contract2)).to be_present
+          expect(Access.find_by(user: user, contract: contract1)).to_not be_present
+        end
+      end
+      
+      context "remove all contract associations" do
+        let!(:contract1) { FactoryBot.create(:contract, site: site) }
+        let!(:contract2) { FactoryBot.create(:contract, site: site) }
+        let!(:contract3) { FactoryBot.create(:contract, site: site) }
+        let!(:access1) { FactoryBot.create(:access, contract: contract1, user: user)}
+        let!(:access2) { FactoryBot.create(:access, contract: contract2, user: user)}
+        let!(:access3) { FactoryBot.create(:access, contract: contract3, user: user)}
+        let(:valid_attributes_with_contract) {
+          { first_name: "first 2",
+            last_name: "last 2",
+            ignore_password: true,
+            'contract_ids[]' => '' # if not written this way, Rails will ignore the param
+          }
+        }
+        
+        subject { patch :update, params: { :id => user.id, :user => valid_attributes_with_contract } }
+
+        it "succeeds" do
+          subject
+          expect(response).to have_http_status(:success)
+        end
+        
+        it "updates the user" do
+          subject
+          result = User.find_by_id(user.id)
+          expect(result.first_name).to eq("first 2")
+          expect(result.last_name).to eq("last 2")
+        end
+        
+        it "modifies access records" do
+          expect(user.contract_ids.length).to eq(Access.all.length)
+          expect(Access.find_by(user: user, contract: contract3)).to be_present
+          expect(Access.find_by(user: user, contract: contract2)).to be_present
+          expect(Access.find_by(user: user, contract: contract1)).to be_present
+          
+          subject
+          
+          expect(Access.find_by(user: user, contract: contract3)).to_not be_present
+          expect(Access.find_by(user: user, contract: contract2)).to_not be_present
+          expect(Access.find_by(user: user, contract: contract1)).to_not be_present
+        end
       end
     end
   end
