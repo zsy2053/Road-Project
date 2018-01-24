@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180122205723) do
+ActiveRecord::Schema.define(version: 20180124155056) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -42,7 +42,6 @@ ActiveRecord::Schema.define(version: 20180122205723) do
     t.string "work_location", null: false
     t.string "day", null: false
     t.string "shift", null: false
-    t.string "sequence_number", null: false
     t.string "name", null: false
     t.text "description", null: false
     t.integer "expected_duration", null: false
