@@ -99,7 +99,6 @@ RSpec.describe RoadOrdersController, type: :controller do
           {
             "name" => "Mvt/Assy",
             "description" => "Description",
-            "sequence_number" => "Seq#",
             "day" => "1",
             "shift" => "1",
             "work_location" => "Work Location",
@@ -179,7 +178,6 @@ RSpec.describe RoadOrdersController, type: :controller do
           # check definition attributes
           expect(definitionResult.name).to eq("Mvt/Assy")
           expect(definitionResult.description).to eq("Description")
-          expect(definitionResult.sequence_number).to eq("Seq#")
           expect(definitionResult.day).to eq("1")
           expect(definitionResult.shift).to eq("1")
           expect(definitionResult.work_location).to eq("Work Location")

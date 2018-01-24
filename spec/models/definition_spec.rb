@@ -8,9 +8,7 @@ RSpec.describe Definition, type: :model do
   it { should belong_to(:road_order) }
   
   it { should validate_presence_of(:name) }
-  
-  it { should validate_presence_of(:sequence_number) }
-  
+    
   it { should validate_presence_of(:day) }
   
   it { should validate_presence_of(:shift) }

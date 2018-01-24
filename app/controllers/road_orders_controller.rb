@@ -61,7 +61,6 @@ class RoadOrdersController < ApplicationController
       { definitions_attributes: [
         :name,
         :description,
-        :sequence_number,
         :day,
         :shift,
         :work_location,
