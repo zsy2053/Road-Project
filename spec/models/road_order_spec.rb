@@ -13,6 +13,10 @@ RSpec.describe RoadOrder, type: :model do
   
   it { should validate_presence_of :car_type }
   
+  it { should validate_presence_of :work_centre }
+  
+  it { should validate_presence_of :module }
+  
   it { should validate_presence_of :start_car }
   
   it { should have_many(:definitions).dependent(:destroy) }
@@ -21,7 +25,7 @@ RSpec.describe RoadOrder, type: :model do
   #it { should serialize :positions }
   describe :positions do
     it "should serialize an array" do
-      arr = [ "1", "2" ]
+      arr = [ "A1", "B1" ]
       x = FactoryBot.create(:road_order, positions: arr)
       x.reload
       expect(x.positions).to eq(arr)
@@ -32,7 +36,16 @@ RSpec.describe RoadOrder, type: :model do
   #it { should serialize :day_shifts }
   describe :day_shifts do
     it "should serialize a has" do
-      hsh = { "1" => [ "1", "2" ], "2" => [ "1", "2" ] }
+      hsh = {
+        "1" => [
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ],
+        "2" =>[
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ]
+      }
       x = FactoryBot.create(:road_order, day_shifts: hsh)
       x.reload
       expect(x.day_shifts).to eq(hsh)

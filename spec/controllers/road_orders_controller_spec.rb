@@ -39,15 +39,6 @@ RSpec.describe RoadOrdersController, type: :controller do
         expect(result).to include(road_order1)
         expect(result).not_to include(road_order2)
       end
-
-      it "returns correct json of road order join with station and contract." do
-        subject
-        result = JSON.parse(response.body)[0]
-        expect(result['car_type']).to eq('A')
-        expect(result['start_car']).to eq(1)
-        expect(result['station']).to eq('station 1')
-        expect(result['contract']).to eq('contract 1')
-      end
     end
   end
 
@@ -77,11 +68,6 @@ RSpec.describe RoadOrdersController, type: :controller do
       it "returns the road order if user has access" do
         get :show, params: { id: road_order1.id }
         expect(response).to have_http_status(:success)
-        #result = JSON.parse(response.body)
-        #expect(result['car_type']). to eq('A')
-        #expect(result['start_car']). to eq(1)
-        #expect(result['station']).to eq('station 1')
-        #expect(result['contract']).to eq('contract 1')
       end
 
       it "doesn't return the road order if user has no access" do
@@ -106,6 +92,8 @@ RSpec.describe RoadOrdersController, type: :controller do
         start_car: 123,
         station_id: station.id,
         file_path: 'file_path',
+        work_centre: "Bonding",
+        module: "B",
         positions: [ 'A1', 'B1' ],
         definitions_attributes: [
           {
@@ -124,9 +112,15 @@ RSpec.describe RoadOrdersController, type: :controller do
           }
         ],
         day_shifts: {
-          "1" => [ "1", "2" ],
-          "2" => [ "1", "2" ]
-        }
+        "1" => [
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ],
+        "2" =>[
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ]
+      }
       }
     }
     
@@ -167,7 +161,16 @@ RSpec.describe RoadOrdersController, type: :controller do
           expect(result.author.id).to eq(author.id)
           # TODO expect(result.file_path).to eq('file_path')
           expect(result.positions).to eq([ 'A1', 'B1' ])
-          expect(result.day_shifts).to eq({ "1" => [ "1", "2" ], "2" => [ "1", "2" ] })
+          expect(result.day_shifts).to eq({
+            "1" => [
+              { "shift" => "1", "start" => "07:00:00", "end" => "13:00:00" },
+              { "shift" => "1", "start" => "13:00:00", "end" => "19:00:00" }
+            ],
+            "2" =>[
+              { "shift" => "1", "start" => "07:00:00", "end" => "13:00:00" },
+              { "shift" => "1", "start" => "13:00:00", "end" => "19:00:00" }
+            ]
+          })
           
           definitionResult = Definition.last
           expect(result.definitions.size).to eq(1)

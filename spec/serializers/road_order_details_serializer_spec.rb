@@ -23,9 +23,17 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
     let!(:road_order) { FactoryBot.create(:road_order,
       car_type: "COACH",
       start_car: 30,
+      work_centre: "Work Centre",
+      module: "Module",
       day_shifts: {
-        "1" => [ "1", "2" ],
-        "2" => [ "1", "2" ]
+        "1" => [
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ],
+        "2" =>[
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ]
       },
       positions: [ 'A1', 'B1'],
       import: Rack::Test::UploadedFile.new(Rails.root.join('spec', 'fixtures', 'e-road-order-template.xlsx'), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -53,9 +61,17 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
     let!(:road_order) { FactoryBot.create(:road_order,
       car_type: "COACH",
       start_car: 30,
+      work_centre: "Work Centre",
+      module: "Module",
       day_shifts: {
-        "1" => [ "1", "2" ],
-        "2" => [ "1", "2" ]
+        "1" => [
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ],
+        "2" =>[
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ]
       },
       positions: [ 'A1', 'B1'],
       # import is not being defined to save calls against S3 -- context "road order with an attachment"
@@ -66,6 +82,8 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
         'id',
         'car_type',
         'start_car',
+        'work_centre',
+        'module',
         'day_shifts',
         'positions',
         'import_url',
@@ -88,10 +106,24 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
       expect(subject['start_car']).to eq(30)
     end
     
+    it "has expected work_centre" do
+      expect(subject['work_centre']).to eq('Work Centre')
+    end
+    
+    it "has expected module" do
+      expect(subject['module']).to eq('Module')
+    end
+    
     it "has expected day_shifts" do
       expect(subject['day_shifts']).to eq({
-        "1" => [ "1", "2" ],
-        "2" => [ "1", "2" ]
+        "1" => [
+          { "shift" => "1", "start" => "07:00:00", "end" => "13:00:00" },
+          { "shift" => "1", "start" => "13:00:00", "end" => "19:00:00" }
+        ],
+        "2" =>[
+          { "shift" => "1", "start" => "07:00:00", "end" => "13:00:00" },
+          { "shift" => "1", "start" => "13:00:00", "end" => "19:00:00" }
+        ]
       })
     end
     
@@ -119,9 +151,17 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
     let!(:road_order) { FactoryBot.create(:road_order,
       car_type: "COACH",
       start_car: 30,
+      work_centre: "Work Centre",
+      module: "Module",
       day_shifts: {
-        "1" => [ "1", "2" ],
-        "2" => [ "1", "2" ]
+        "1" => [
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ],
+        "2" =>[
+          { :shift => "1", :start => "07:00:00", :end => "13:00:00" },
+          { :shift => "1", :start => "13:00:00", :end => "19:00:00" }
+        ]
       },
       positions: [ 'A1', 'B1'],
       # import is not being defined to save calls against S3 -- context "road order with an attachment"
@@ -162,6 +202,8 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
         'id',
         'car_type',
         'start_car',
+        'work_centre',
+        'module',
         'day_shifts',
         'positions',
         'import_url',
@@ -184,10 +226,24 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
       expect(subject['start_car']).to eq(30)
     end
     
+    it "has expected work_centre" do
+      expect(subject['work_centre']).to eq('Work Centre')
+    end
+    
+    it "has expected module" do
+      expect(subject['module']).to eq('Module')
+    end
+    
     it "has expected day_shifts" do
       expect(subject['day_shifts']).to eq({
-        "1" => [ "1", "2" ],
-        "2" => [ "1", "2" ]
+        "1" => [
+          { "shift" => "1", "start" => "07:00:00", "end" => "13:00:00" },
+          { "shift" => "1", "start" => "13:00:00", "end" => "19:00:00" }
+        ],
+        "2" =>[
+          { "shift" => "1", "start" => "07:00:00", "end" => "13:00:00" },
+          { "shift" => "1", "start" => "13:00:00", "end" => "19:00:00" }
+        ]
       })
     end
     
