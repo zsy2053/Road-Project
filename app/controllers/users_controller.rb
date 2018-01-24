@@ -68,8 +68,6 @@ class UsersController < ApplicationController
       :phone, 
       :suspended, 
       :ignore_password,
-      {accesses_attributes: [
-        :contract_id
-      ]})
+      contract_ids: [])
     end
 end
