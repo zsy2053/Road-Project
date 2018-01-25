@@ -42,24 +42,6 @@ ActiveRecord::Schema.define(version: 20180125153357) do
     t.index ["station_id"], name: "index_back_orders_on_station_id"
   end
 
-  create_table "car_road_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint "car_id"
-    t.bigint "road_order_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["car_id"], name: "index_car_road_orders_on_car_id"
-    t.index ["road_order_id"], name: "index_car_road_orders_on_road_order_id"
-  end
-
-  create_table "cars", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "car_type"
-    t.integer "number"
-    t.bigint "contract_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["contract_id"], name: "index_cars_on_contract_id"
-  end
-
   create_table "contracts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "site_id"
     t.string "status", default: "draft", null: false
@@ -137,6 +119,31 @@ ActiveRecord::Schema.define(version: 20180125153357) do
     t.index ["contract_id"], name: "index_stations_on_contract_id"
   end
 
+  create_table "transfer_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "order", null: false
+    t.string "delivery_device"
+    t.string "priority", null: false
+    t.string "reason_code", null: false
+    t.string "name"
+    t.string "code"
+    t.string "installation"
+    t.string "to_number", null: false
+    t.string "car", null: false
+    t.string "sort_string", null: false
+    t.datetime "date_entered"
+    t.datetime "date_received_3pl"
+    t.datetime "date_staging"
+    t.datetime "date_shipped_bt"
+    t.datetime "date_received_bt"
+    t.datetime "date_production"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "station_id"
+    t.bigint "contract_id"
+    t.index ["contract_id"], name: "index_transfer_orders_on_contract_id"
+    t.index ["station_id"], name: "index_transfer_orders_on_station_id"
+  end
+
   create_table "uploads", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "category"
     t.string "filename"
@@ -180,15 +187,14 @@ ActiveRecord::Schema.define(version: 20180125153357) do
   add_foreign_key "accesses", "users"
   add_foreign_key "back_orders", "contracts"
   add_foreign_key "back_orders", "stations"
-  add_foreign_key "car_road_orders", "cars"
-  add_foreign_key "car_road_orders", "road_orders"
-  add_foreign_key "cars", "contracts"
   add_foreign_key "contracts", "sites"
   add_foreign_key "definitions", "road_orders"
   add_foreign_key "road_orders", "contracts"
   add_foreign_key "road_orders", "stations"
   add_foreign_key "road_orders", "users", column: "author_id"
   add_foreign_key "stations", "contracts"
+  add_foreign_key "transfer_orders", "contracts"
+  add_foreign_key "transfer_orders", "stations"
   add_foreign_key "uploads", "users"
   add_foreign_key "users", "sites"
 end
