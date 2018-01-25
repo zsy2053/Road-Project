@@ -5,7 +5,6 @@ class ContractsController < ApplicationController
 
   # GET /contracts
   def index
-    authorize! :read, Contract
     @contracts = Contract.accessible_by(current_ability)
     render json: @contracts
   end
