@@ -5,7 +5,7 @@ class RoadOrder < ApplicationRecord
   belongs_to :contract
   belongs_to :author, class_name: 'User'
   
-  validates_presence_of :car_type, :work_centre, :module, :start_car
+  validates_presence_of :car_type, :work_centre, :start_car
   
   has_many :definitions, inverse_of: :road_order, :dependent => :destroy
   accepts_nested_attributes_for :definitions
