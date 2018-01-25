@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180124155056) do
+ActiveRecord::Schema.define(version: 20180125153357) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -19,6 +19,45 @@ ActiveRecord::Schema.define(version: 20180124155056) do
     t.datetime "updated_at", null: false
     t.index ["contract_id"], name: "index_accesses_on_contract_id"
     t.index ["user_id"], name: "index_accesses_on_user_id"
+  end
+
+  create_table "back_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "bom_exp_no"
+    t.bigint "station_id"
+    t.bigint "contract_id"
+    t.string "mrp_cont"
+    t.string "cri"
+    t.string "component"
+    t.string "material_description"
+    t.string "sort_string"
+    t.string "assembly"
+    t.string "order"
+    t.string "item_text_line_1"
+    t.integer "qty"
+    t.string "vendor_name"
+    t.string "material"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contract_id"], name: "index_back_orders_on_contract_id"
+    t.index ["station_id"], name: "index_back_orders_on_station_id"
+  end
+
+  create_table "car_road_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "car_id"
+    t.bigint "road_order_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id"], name: "index_car_road_orders_on_car_id"
+    t.index ["road_order_id"], name: "index_car_road_orders_on_road_order_id"
+  end
+
+  create_table "cars", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "car_type"
+    t.integer "number"
+    t.bigint "contract_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contract_id"], name: "index_cars_on_contract_id"
   end
 
   create_table "contracts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -139,6 +178,11 @@ ActiveRecord::Schema.define(version: 20180124155056) do
 
   add_foreign_key "accesses", "contracts"
   add_foreign_key "accesses", "users"
+  add_foreign_key "back_orders", "contracts"
+  add_foreign_key "back_orders", "stations"
+  add_foreign_key "car_road_orders", "cars"
+  add_foreign_key "car_road_orders", "road_orders"
+  add_foreign_key "cars", "contracts"
   add_foreign_key "contracts", "sites"
   add_foreign_key "definitions", "road_orders"
   add_foreign_key "road_orders", "contracts"

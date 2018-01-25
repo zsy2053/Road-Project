@@ -162,6 +162,103 @@ RSpec.shared_examples "a user who can only read their own site" do |role|
   end
 end
 
+RSpec.shared_examples "a user who can only read their back orders" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:other_contract) { FactoryBot.create(:contract) }
+
+  let(:back_order) { FactoryBot.build_stubbed(:back_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
+  let(:other_back_order) { FactoryBot.build_stubbed(:back_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
+  
+  
+  let!(:back_orders) { [FactoryBot.create(:back_order, contract: other_contract, station: stations[0]),
+                     FactoryBot.create(:back_order, contract: other_contract, station: stations[1])] }
+                     
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  
+  let(:ability) { Ability.new(this_user) }
+  
+  it "can read back orders for an accessible contract" do
+    expect(ability).to be_able_to(:read, back_order)
+  end
+  
+  it "cannot read back orders for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:read, other_back_order)
+  end
+end
+
+RSpec.shared_examples "a user who can read all back orders" do |role|
+  let!(:this_user) { FactoryBot.build_stubbed(:user, role: role) }
+  let!(:ability) { Ability.new(this_user) }
+  let!(:back_order) { FactoryBot.build_stubbed(:back_order) }
+  let!(:other_back_order) { FactoryBot.build_stubbed(:back_order) }
+  
+  before(:each) do
+    expect(this_user.accesses).to be_empty
+  end
+  
+  it "can read back orders for an inaccessible contract" do
+    expect(ability).to be_able_to(:read, back_order)
+    expect(ability).to be_able_to(:read, other_back_order)
+  end
+end
+
+RSpec.shared_examples "a user who cannot modify back orders" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  let!(:ability) { Ability.new(this_user) }
+  
+  it "cannot create a new back order" do
+    expect(ability).to_not be_able_to(:create, BackOrder)
+  end
+  
+  it "cannot update a back order" do
+    expect(ability).to_not be_able_to(:update, BackOrder)
+  end
+  
+  it "cannot delete a back order" do
+    expect(ability).to_not be_able_to(:delete, BackOrder)
+  end
+end
+
+RSpec.shared_examples "a user who can create but not modify back orders for their contracts" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:other_contract) { FactoryBot.create(:contract) }
+  
+  # road order objects use 'build' so the are not considered to be persisted
+  let(:road_order) { FactoryBot.build(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
+  let(:other_road_order) { FactoryBot.build(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
+  
+  let!(:back_order) { FactoryBot.build(:back_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
+  let!(:other_back_order) { FactoryBot.build(:back_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
+                     
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  
+  let(:ability) { Ability.new(this_user) }
+  
+  it "cannot create a back order for an inaccessible contract" do
+    expect(ability).to be_able_to(:create, BackOrder)
+    expect(other_back_order).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_road_order)
+  end
+  
+  it "can create a back order for an accessible contract" do
+    expect(ability).to be_able_to(:create, BackOrder)
+    expect(back_order).to_not be_persisted
+    expect(ability).to be_able_to(:create, back_order)
+  end
+  
+  it "cannot update a back order" do
+    expect(ability).to_not be_able_to(:update, BackOrder)
+  end
+  
+  it "cannot delete a back order" do
+    expect(ability).to_not be_able_to(:delete, BackOrder)
+  end
+end
+
 describe "Ability" do
 
   let!(:sites) {[ FactoryBot.create(:site), FactoryBot.create(:site) ]}
@@ -217,6 +314,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can only read their road orders", "supervisor"
     it_should_behave_like "a user who cannot modify road orders", "supervisor"
+    
+    it_should_behave_like "a user who can only read their back orders", "supervisor"
+    it_should_behave_like "a user who cannot modify back orders", "supervisor"    
   end
 
   describe "planner" do
@@ -260,6 +360,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can only read their road orders", "planner"
     it_should_behave_like "a user who cannot modify road orders", "planner"
+    
+    it_should_behave_like "a user who can only read their back orders", "planner"
+    it_should_behave_like "a user who can create but not modify back orders for their contracts", "planner"
   end
 
   describe "method_engineer" do
@@ -303,6 +406,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can only read their road orders", "method_engineer"
     it_should_behave_like "a user who can create but not modify road orders for their contracts", "method_engineer"
+    
+    it_should_behave_like "a user who can only read their back orders", "method_engineer"
+    it_should_behave_like "a user who cannot modify back orders", "method_engineer"    
   end
 
   describe "quality" do
@@ -346,6 +452,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can only read their road orders", "quality"
     it_should_behave_like "a user who cannot modify road orders", "quality"
+    
+    it_should_behave_like "a user who can only read their back orders", "quality"
+    it_should_behave_like "a user who cannot modify back orders", "quality"    
   end
 
   describe "station" do
@@ -389,6 +498,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can only read their road orders", "station"
     it_should_behave_like "a user who cannot modify road orders", "station"
+    
+    it_should_behave_like "a user who can only read their back orders", "station"
+    it_should_behave_like "a user who cannot modify back orders", "station"    
   end
 
   describe "admin" do
@@ -470,6 +582,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can only read their road orders", "admin"
     it_should_behave_like "a user who cannot modify road orders", "admin"
+    
+    it_should_behave_like "a user who can only read their back orders", "admin"
+    it_should_behave_like "a user who cannot modify back orders", "admin"    
   end
 
   describe "super_admin" do
@@ -501,6 +616,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can read all road orders", "super_admin"
     it_should_behave_like "a user who cannot modify road orders", "super_admin"
+    
+    it_should_behave_like "a user who can read all road orders", "super_admin"
+    it_should_behave_like "a user who cannot modify back orders", "super_admin"    
   end
 
   def can_read_the_site_they_belong_to(user)
