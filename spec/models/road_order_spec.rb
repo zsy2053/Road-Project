@@ -14,9 +14,7 @@ RSpec.describe RoadOrder, type: :model do
   it { should validate_presence_of :car_type }
   
   it { should validate_presence_of :work_centre }
-  
-  it { should validate_presence_of :module }
-  
+    
   it { should validate_presence_of :start_car }
   
   it { should have_many(:definitions).dependent(:destroy) }
