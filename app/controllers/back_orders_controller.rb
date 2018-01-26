@@ -3,11 +3,19 @@ class BackOrdersController < ApplicationController
   
   rescue_from CanCan::AccessDenied, with: :not_authorized
 
+  before_action :set_back_order, only: [:show]
   # GET /back_orders
   def index
     @back_orders = BackOrder.accessible_by(current_ability)
     render json: @back_orders
   end
+  
+  # GET /back_orders/1
+ def show
+    authorize! :read, @back_order
+    render json: @back_order
+  end
+  
   
   protected
     
@@ -16,6 +24,11 @@ class BackOrdersController < ApplicationController
   end
     
   private
+  
+    # Use callbacks to share common setup or constraints between actions.
+    def set_back_order
+      @back_order = BackOrder.find(params[:id])
+    end
     
   # Only allow a trusted parameter "white list" through.
   def back_order_params
