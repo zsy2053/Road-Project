@@ -96,11 +96,6 @@ RSpec.describe ContractsController, type: :controller do
       end
     end
 
-    context "for station user" do
-      it_behaves_like "reads contract by id based on access" do
-        let(:one_user) { FactoryBot.create(:admin_user) }
-      end
-    end
     context "for Method Engineer" do
       it_behaves_like "reads contract by id based on access" do
         let(:one_user) { FactoryBot.create(:method_engineer_user) }
