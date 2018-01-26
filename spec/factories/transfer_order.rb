@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :transfer_order do
     station
     contract
-    to_number "to_number"
+    to_number "2"
     car "car"
     order 1
     installation "installation"

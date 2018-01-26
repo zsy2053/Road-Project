@@ -10,6 +10,10 @@ Rails.application.routes.draw do
   resources :accesses, only: [:create, :destroy]
   post 'accesses/multi_update', to: 'accesses#multi_update'
   resources :back_orders, only: [:index, :show, :create]
+
+  resources :transfer_orders, only: [:index, :show]
+  post 'transfer_orders/', to: 'transfer_orders#create_or_update'
+
   post 'password/forgot', to: 'passwords#forgot'
   post 'password/reset', to: 'passwords#reset'
 end
