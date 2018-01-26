@@ -12,7 +12,9 @@ class Ability
 
       if user.super_admin?
         can :manage, [Site, Station, Contract, User, Access]
-        can :read, [RoadOrder]
+        can :read, [RoadOrder, TransferOrder]
+      elsif user.api_trackware?
+        can :manage, TransferOrder
       else
         can :read, Site, :id => user.site_id
         user_contracts = user.contracts.pluck(:id)
@@ -34,8 +36,12 @@ class Ability
           can :manage, User, :site_id => user.site_id, :role => admin_accessible_roles
           can :manage, Access, user: { site_id: user.site_id, role: admin_accessible_roles }
         end
+
+        if user.station? or user.supervisor? or user.quality?
+          can :read, TransferOrder, :contract_id => user_contracts
+        end
       end
-      
+
       # a user can manage their own uploads
       can :manage, Upload, user_id: user.id
     end

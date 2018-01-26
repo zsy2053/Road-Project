@@ -22,7 +22,7 @@ RSpec.describe TransferOrder, type: :model do
   it { should validate_presence_of(:priority) }
 
   it { should validate_presence_of(:reason_code) }
-  
+
   it "automatically assigns a contract if station present" do
     station = FactoryBot.create(:station)
     to = FactoryBot.build(:transfer_order, station: station, contract: nil)
@@ -30,7 +30,7 @@ RSpec.describe TransferOrder, type: :model do
     to.reload
     expect(to.contract).to eq(station.contract)
   end
-  
+
   it "doesn't automatically assign a contract if station not present" do
     to = FactoryBot.build(:transfer_order, station: nil, contract: nil)
     expect(to.save).to be_falsey
