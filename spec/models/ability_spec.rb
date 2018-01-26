@@ -263,15 +263,18 @@ describe "Ability" do
 
   let!(:sites) {[ FactoryBot.create(:site), FactoryBot.create(:site) ]}
   let!(:user) { FactoryBot.create(:user, site: sites[0]) }
-  let!(:users) {[ FactoryBot.create(:user, site: sites[0]), FactoryBot.create(:user, site: sites[1]) ]}
+  let!(:users) {[ FactoryBot.create(:user, site: sites[0], role: "station"), FactoryBot.create(:user, site: sites[1], role: "station") ]}
+  let!(:super_admin) {FactoryBot.create(:super_admin_user, site: sites[0])}
   let!(:contracts) {[ FactoryBot.create(:contract, site: sites[0], status: "open"),
                       FactoryBot.create(:contract, site: sites[1], status: "open") ]}
   let!(:accesses) {[ FactoryBot.create(:access, user: users[0], contract: contracts[0]),
-                     FactoryBot.create(:access, user: users[1], contract: contracts[1]) ]}
+                     FactoryBot.create(:access, user: users[1], contract: contracts[1]),
+                     FactoryBot.create(:access, user: super_admin, contract: contracts[0]) ]}
   let!(:stations) {[ FactoryBot.create(:station, contract: contracts[0]),
                      FactoryBot.create(:station, contract: contracts[1]) ]}
   let!(:road_orders) { [FactoryBot.create(:road_order, station: stations[0]),
                      FactoryBot.create(:road_order, station: stations[1])] }
+
 
   describe "supervisor" do
 
@@ -304,10 +307,10 @@ describe "Ability" do
       cannot_see_the_stations_for_the_contract_they_do_not_belong_to(user)
     end
 
-    it "should not allow supervisors to see users" do
-      cannot_see_users(user)
+    it "should only allow supervisors to see users(except super_admin) which have at least one same contract" do
+      can_only_see_users_belong_to_same_contract(user)
     end
-    
+
     it_should_behave_like "a user who can only read their own site", "supervisor"
     
     it_should_behave_like "a user who can manage uploads", "supervisor"
@@ -350,10 +353,10 @@ describe "Ability" do
       cannot_see_the_stations_for_the_contract_they_do_not_belong_to(user)
     end
 
-    it "should not allow planners to see users" do
-      cannot_see_users(user)
+    it "should only allow planners to see users(except super_admin) which have at least one same contract" do
+      can_only_see_users_belong_to_same_contract(user)
     end
-    
+
     it_should_behave_like "a user who can only read their own site", "planner"
     
     it_should_behave_like "a user who can manage uploads", "planner"
@@ -396,8 +399,8 @@ describe "Ability" do
       cannot_see_the_stations_for_the_contract_they_do_not_belong_to(user)
     end
 
-    it "should not allow method_engineers to see users" do
-      cannot_see_users(user)
+    it "should only allow method_engineers to see users(except super_admin) which have at least one same contract" do
+      can_only_see_users_belong_to_same_contract(user)
     end
     
     it_should_behave_like "a user who can only read their own site", "method_engineer"
@@ -442,8 +445,8 @@ describe "Ability" do
       cannot_see_the_stations_for_the_contract_they_do_not_belong_to(user)
     end
 
-    it "should not allow qualitys to see users" do
-      cannot_see_users(user)
+    it "should only allow qualitys to see users(except super_admin) which have at least one same contract" do
+      can_only_see_users_belong_to_same_contract(user)
     end
     
     it_should_behave_like "a user who can only read their own site", "quality"
@@ -464,32 +467,32 @@ describe "Ability" do
       FactoryBot.create(:access, user:user, contract: contracts[0])
     end
 
-    it "should allow stations to see the site they belong to" do
+    it "should allow station users to see the site they belong to" do
       can_read_the_site_they_belong_to(user)
     end
 
-    it "should not allow stations to see the sites they do not belong to" do
+    it "should not allow station users to see the sites they do not belong to" do
       cannot_read_the_sites_they_do_not_belong_to(user)
     end
 
-    it "should allow stations to see the contracts they belong to" do
+    it "should allow station users to see the contracts they belong to" do
      can_read_the_contracts_they_belong_to(user)
     end
 
-    it "should not allow stations to see the contracts they do not belong to" do
+    it "should not allow station users to see the contracts they do not belong to" do
      cannot_read_the_contracts_they_do_not_belong_to(user)
     end
 
-    it "should allow stations to see the station for their contract" do
+    it "should allow station users to see the station for their contract" do
       can_see_the_stations_for_the_contract_they_belong_to(user)
     end
 
-    it "should not allow stations to see the stations for other contracts" do
+    it "should not allow station users to see the stations for other contracts" do
       cannot_see_the_stations_for_the_contract_they_do_not_belong_to(user)
     end
 
-    it "should not allow stations to see users" do
-      cannot_see_users(user)
+    it "should only allow station users to see users(except super_admin) which have at least one same contract" do
+      can_only_see_users_belong_to_same_contract(user)
     end
     
     it_should_behave_like "a user who can only read their own site", "station"
@@ -675,10 +678,10 @@ describe "Ability" do
     expect(ability).not_to be_able_to(:delete, stations[1])
   end
 
-  def cannot_see_users(user)
+  def can_only_see_users_belong_to_same_contract(user)
     ability = Ability.new(user)
 
-    expect(ability).not_to be_able_to(:read, users[0])
+    expect(ability).to be_able_to(:read, users[0])
     expect(ability).not_to be_able_to(:create, users[0])
     expect(ability).not_to be_able_to(:update, users[0])
     expect(ability).not_to be_able_to(:delete, users[0])
@@ -686,5 +689,6 @@ describe "Ability" do
     expect(ability).not_to be_able_to(:create, users[1])
     expect(ability).not_to be_able_to(:update, users[1])
     expect(ability).not_to be_able_to(:delete, users[1])
+    expect(ability).not_to be_able_to(:read, super_admin)
   end
 end
