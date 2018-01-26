@@ -17,7 +17,7 @@ class User < ApplicationRecord
 
   belongs_to :site
   has_many :accesses
-  accepts_nested_attributes_for :accesses  
+  accepts_nested_attributes_for :accesses
   has_many :contracts, :through => :accesses
   has_many :stations, :through => :contracts, :source => :stations
   validates :first_name, presence: true
@@ -41,5 +41,4 @@ class User < ApplicationRecord
   def init
     self.suspended = false if self.suspended.nil?
   end
-  
 end
