@@ -9,7 +9,8 @@ class User < ApplicationRecord
     method_engineer: "method_engineer",
     quality: "quality",
     station: "station",
-    api_trackware: "api_trackware"
+    api_trackware: "api_trackware",
+    andon: "andon"
   }
 
   # Include default devise modules. Others available are:
