@@ -2,18 +2,31 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   it { should belong_to(:site) }
-  
+
   it "has a valid factory" do
     expect(FactoryBot.build(:user)).to be_valid
   end
-  
+
   it { should validate_presence_of :first_name }
-  
+
   it { should validate_presence_of :last_name }
-  
+
   it { should validate_presence_of :email }
-  
-  it { should validate_presence_of :username }
+
+  describe "user name attribute" do
+    it "cannot be nil" do
+      expect(FactoryBot.build(:user, username: nil)).to_not be_valid
+    end
+
+    it "should be unique" do
+      user1 = FactoryBot.build(:user, username: "TestUser1234")
+      user1.save
+      user2 = FactoryBot.build(:user, username: "TestUser1234")
+      expect { user2.save! }.to raise_error(
+        ActiveRecord::RecordInvalid
+      )
+    end
+  end
 
   describe "password attribute" do
     it "cannot be nil" do
@@ -97,31 +110,31 @@ RSpec.describe User, type: :model do
       expect{ @user.role = "A" }.to raise_error(ArgumentError)
     end
   end
-  
+
   describe :suspended do
     it "should accept 'true'" do
       expect(FactoryBot.build(:user, :suspended => true)).to be_valid
     end
-    
+
     it "should accept 'false'" do
       expect(FactoryBot.build(:user, :suspended => false)).to be_valid
     end
-    
+
     it "should not accept nil" do
       expect(FactoryBot.build(:user, :suspended => nil)).to_not be_valid
     end
-    
+
     it "should default to false when initialized" do
       expect(User.new().suspended).to eq(false)
     end
   end
-  
+
   describe :active_for_authentication? do
     it "should return true if suspended attribute is false" do
       user = FactoryBot.build_stubbed(:supervisor_user, suspended: false)
       expect(user.active_for_authentication?).to eq(true)
     end
-    
+
     it "should return true if suspended attribute is false" do
       user = FactoryBot.build_stubbed(:supervisor_user, suspended: true)
       expect(user.active_for_authentication?).to eq(false)
