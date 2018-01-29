@@ -14,25 +14,30 @@ class AccessesController < ApplicationController
 	end
 
 	def multi_update
-		authorize! :multi_update, Access.new(contract_id: accesses_params[:contract_id])
+	  # create transaction to rollback changes if any record is invalid or if the user lacks access
 		begin
 			Access.transaction do
-				# create access records based on the contract_id value and each user_id in the update_ids array.
-				unless accesses_params[:update_ids].blank?
-					accesses_params[:update_ids].each do |user_id|
-						access = Access.new(:user_id => user_id, :contract_id => accesses_params[:contract_id])
-						unless access.save
-						  unless access.errors.messages[:user] == ["has already been taken"]
-						  	raise ActiveRecord::RecordInvalid
-						  end
-						end
+				# create access records based on the contract_id value and each user_id in the
+				# update_ids array and authorize access on each record
+				accesses_params[:update_ids].each do |user_id|
+					access = Access.new(:user_id => user_id, :contract_id => accesses_params[:contract_id])
+					authorize! :create, access
+					unless access.save
+					  # ignore if access already exists
+					  unless access.errors.messages[:user] == ["has already been taken"]
+					  	raise ActiveRecord::RecordInvalid
+					  end
 					end
 				end
-
-				unless accesses_params[:delete_ids].blank?
-					Access.where(:user_id => accesses_params[:delete_ids], :contract_id => accesses_params[:contract_id]).destroy_all
+				
+				# check authorization on each access object before deleting
+				delete_accesses = Access.where(:user_id => accesses_params[:delete_ids], :contract_id => accesses_params[:contract_id])
+				delete_accesses.each do |access|
+				  authorize! :destroy, access
 				end
+				delete_accesses.destroy_all
 			end
+			
 			# return all the users that the current_user can read because the react side needs users collection to render.
 			@users = User.includes(accesses: :contract).accessible_by(current_ability)
 			render json: @users

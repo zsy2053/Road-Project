@@ -34,7 +34,7 @@ class Ability
 
         if user.admin?
           can :manage, User, :site_id => user.site_id, :role => admin_accessible_roles
-          can :manage, Access, user: { site_id: user.site_id, role: admin_accessible_roles }
+          can :manage, Access, :contract_id => user_contracts, user: { site_id: user.site_id, role: admin_accessible_roles }
         end
 
         if user.station? or user.supervisor? or user.quality?
