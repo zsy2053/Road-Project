@@ -86,6 +86,12 @@ RSpec.describe User, type: :model do
       @user.station!
       expect(@user.role).to eq("station")
     end
+    
+    it "can be assigned to andon" do
+      expect(@user.andon?).to be false
+      @user.andon!
+      expect(@user.role).to eq("andon")
+    end
 
     it "should get a error if wrong value being assigned" do
       expect{ @user.role = "A" }.to raise_error(ArgumentError)
