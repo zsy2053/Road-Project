@@ -80,7 +80,9 @@ RSpec.describe RoadOrderSerializer, type: :serializer do
         'work_centre',
         'module',
         'station',
-        'contract'
+        'station_name',
+        'contract',
+        'contract_name'
       )
     end
     
@@ -105,11 +107,11 @@ RSpec.describe RoadOrderSerializer, type: :serializer do
     end
     
     it "has expected station" do
-      expect(subject['station']).to eq("Station Name")
+      expect(subject['station_name']).to eq("Station Name")
     end
     
     it "has expect contract" do
-      expect(subject['contract']).to eq("Contract Name")
+      expect(subject['contract_name']).to eq("Contract Name")
     end
   end
 end
