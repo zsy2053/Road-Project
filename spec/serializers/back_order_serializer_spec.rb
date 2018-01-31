@@ -27,7 +27,7 @@ RSpec.describe BackOrderSerializer, type: :serializer do
       'item_text_line_1',
       'qty',
       'vendor_name',
-      'material'
+      'focused_part_flag'
     )
   end
   
@@ -87,8 +87,8 @@ RSpec.describe BackOrderSerializer, type: :serializer do
     expect(subject['vendor_name']).to eq(back_order.vendor_name)
   end
   
-  it 'should have material that matches' do
-    expect(subject['material']).to eq(back_order.material)
+  it 'should have focused_part_flag that matches' do
+    expect(subject['focused_part_flag']).to eq(back_order.focused_part_flag)
   end
   
 end
