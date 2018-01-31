@@ -39,8 +39,16 @@ RSpec.describe BackOrderSerializer, type: :serializer do
     expect(subject['contract_name']).to eq(back_order.contract.name)
   end
   
+  it 'should have a contract that matches' do
+    expect(subject['contract']).to eq(JSON.parse(back_order.contract.to_json))
+  end
+  
   it 'should have a station name that matches' do
     expect(subject['station_name']).to eq(back_order.station.name)
+  end
+  
+  it 'should have a station that matches' do
+    expect(subject['station']).to eq(JSON.parse(back_order.station.to_json))
   end
   
   it 'should have a bom_exp_no that matches' do
@@ -90,5 +98,4 @@ RSpec.describe BackOrderSerializer, type: :serializer do
   it 'should have focused_part_flag that matches' do
     expect(subject['focused_part_flag']).to eq(back_order.focused_part_flag)
   end
-  
 end
