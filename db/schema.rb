@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180130152109) do
+ActiveRecord::Schema.define(version: 20180130161028) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -116,7 +116,9 @@ ActiveRecord::Schema.define(version: 20180130152109) do
     t.string "code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["code", "contract_id"], name: "index_stations_on_code_and_contract_id", unique: true
     t.index ["contract_id"], name: "index_stations_on_contract_id"
+    t.index ["name", "contract_id"], name: "index_stations_on_name_and_contract_id", unique: true
   end
 
   create_table "transfer_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

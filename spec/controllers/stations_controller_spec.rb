@@ -237,7 +237,7 @@ RSpec.describe StationsController, type: :controller do
   describe "PUT #update" do
     let(:contract) { FactoryBot.create(:contract) }
     let!(:station) { FactoryBot.create(:station) }
-    let(:valid_attributes) { { :id => station.id, :contract_id => contract.id, :name => "Finch" } }
+    let(:valid_attributes) { { :id => station.id, :contract_id => contract.id, :name => "Finch", :code => "FC" } }
     subject { put :update, params: { :id => station.id, :station => valid_attributes } }
 
     context "for anonymous user" do
@@ -295,10 +295,12 @@ RSpec.describe StationsController, type: :controller do
       end
 
       it "updates a station record by sending valid attributes if login a user with ability :update to station." do
-        expect(station.name).to be_nil
+        expect(station.name).to_not eq("Finch")
+        expect(station.code).to_not eq("FC")
         station_id = station.id
         put :update, params: {:id => station_id, :station => valid_attributes }
         expect(Station.find(station_id).name).to eq("Finch")
+        expect(Station.find(station_id).code).to eq("FC")
       end
     end
   end
