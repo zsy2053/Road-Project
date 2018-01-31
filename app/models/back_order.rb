@@ -1,5 +1,6 @@
 class BackOrder < ApplicationRecord
   before_save :set_contract
+  
   belongs_to :station
   belongs_to :contract
   
