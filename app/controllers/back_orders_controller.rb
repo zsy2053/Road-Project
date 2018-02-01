@@ -12,7 +12,7 @@ class BackOrdersController < ApplicationController
 
   # POST /back_orders
   def create
-    @back_orders = {back_orders: [], errors: {}}
+    @back_orders = {back_orders: {}, errors: {}}
     
     unless params["back_orders"].empty?
       tmp = back_order_params(params["back_orders"][0])
@@ -28,24 +28,25 @@ class BackOrdersController < ApplicationController
         BackOrder.transaction do
           # delete old back orders before saving the new back orders
           deleteOldBackOrders(contract_id)
-         
+          
           # create back orders
-          params["back_orders"].each do |back_order|
+          params["back_orders"].each_with_index do |back_order, index|
             @back_order = BackOrder.new(back_order_params(back_order))
             
+            # check if the contract_id is the same as others
             if @back_order.contract_id == contract_id
               if @back_order.save
-                @back_orders[:back_orders][@back_orders[:back_orders].length] = @back_order
+                @back_orders[:back_orders][@back_order.id] = @back_order
               else
                 @back_orders[:errors][@back_orders[:errors].length] = @back_order.errors
               end
             else
               if @back_order.contract_id
-                @back_orders[:errors][@back_orders[:errors].length] = "different contract"
+                @back_order.errors.add(:contract, 'must match')
               else
                 @back_order.errors.add(:contract, 'must exist')
-                @back_orders[:errors][@back_orders[:errors].length] = @back_order.errors
               end
+              @back_orders[:errors][index] = @back_order.errors
             end
           end
           
