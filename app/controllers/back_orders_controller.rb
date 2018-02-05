@@ -24,6 +24,13 @@ class BackOrdersController < ApplicationController
       # ensure all rows have the same contract_id as the first
       contract_id = @back_order.contract_id
       
+      # store station's name and id to set back order's station_id. stations hash will be updated with other station names when going through the back orders
+      stations = {}
+      if params["back_orders"][0]['station_name']
+        station = Station.find_by(contract_id: contract_id, name: params["back_orders"][0]['station_name'])
+        stations[station.name] = station.id
+      end
+      
       begin
         BackOrder.transaction do
           # delete old back orders before saving the new back orders
@@ -35,12 +42,37 @@ class BackOrdersController < ApplicationController
             
             # check if the contract_id is the same as others
             if @back_order.contract_id == contract_id
-              if @back_order.save
-                @back_orders[:back_orders][@back_order.id] = @back_order
+              # get station_name to get station's id
+              station_id = nil
+              if back_order['station_name'] 
+                if stations[back_order['station_name']]
+                  station_id = stations[back_order['station_name']]
+                else
+                  station = Station.find_by(contract_id: contract_id, name: back_order['station_name'])
+                  station_id = station.id unless station.nil?
+                end
+                
+                # get station's id if could find a station with the given name
+                if station_id
+                  @back_order.station_id = station.id
+                  if @back_order.save
+                    back_order_json = @back_order.as_json.merge!(contract_name: @back_order.contract.name, station_name: @back_order.station.name)
+                    @back_orders[:back_orders][@back_order.id] = back_order_json
+                  else
+                    @back_orders[:errors][index] = @back_order.errors
+                  end
+                else      
+                  # don't have a station with the name station_name
+                  @back_order.errors.add(:station, 'must match')
+                  @back_orders[:errors][index] = @back_order.errors  
+                end
               else
-                @back_orders[:errors][@back_orders[:errors].length] = @back_order.errors
+                # station_name was nil
+                @back_order.errors.add(:station, 'must exist')
+                @back_orders[:errors][index] = @back_order.errors                
               end
             else
+              # contract_id is not nil but is different
               if @back_order.contract_id
                 @back_order.errors.add(:contract, 'must match')
               else
@@ -49,7 +81,7 @@ class BackOrdersController < ApplicationController
               @back_orders[:errors][index] = @back_order.errors
             end
           end
-          
+
           # interrupt transaction if at least one error was found
           unless @back_orders[:errors].empty?
             raise ActiveRecord::RecordInvalid

@@ -620,7 +620,7 @@ describe "Ability" do
     it_should_behave_like "a user who can read all road orders", "super_admin"
     it_should_behave_like "a user who cannot modify road orders", "super_admin"
     
-    it_should_behave_like "a user who can read all road orders", "super_admin"
+    it_should_behave_like "a user who can read all back orders", "super_admin"
     it_should_behave_like "a user who cannot modify back orders", "super_admin"    
   end
 

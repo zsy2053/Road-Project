@@ -12,7 +12,7 @@ class Ability
 
       if user.super_admin?
         can :manage, [Site, Station, Contract, User, Access]
-        can :read, [RoadOrder, TransferOrder]
+        can :read, [RoadOrder, TransferOrder, BackOrder]
       elsif user.api_trackware?
         can :manage, TransferOrder
       else
