@@ -4,6 +4,7 @@ FactoryBot.define do
     last_name "Boss"
     sequence(:email) { |n| "email#{n}@robinsonsolutions.com" }
     sequence(:username) {|n| "username#{n}" }
+    sequence(:employee_id) { |n| 10000 + n }
     password "Qwer1234"
     site
 

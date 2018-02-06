@@ -12,19 +12,28 @@ RSpec.describe User, type: :model do
   it { should validate_presence_of :last_name }
 
   it { should validate_presence_of :email }
-
-  describe "user name attribute" do
+  
+  describe :username do
     it "cannot be nil" do
       expect(FactoryBot.build(:user, username: nil)).to_not be_valid
     end
 
     it "should be unique" do
-      user1 = FactoryBot.build(:user, username: "TestUser1234")
-      user1.save
-      user2 = FactoryBot.build(:user, username: "TestUser1234")
-      expect { user2.save! }.to raise_error(
-        ActiveRecord::RecordInvalid
-      )
+      user1 = FactoryBot.create(:user, username: "TestUser1234")
+      user2 = FactoryBot.build(:user, username: user1.username)
+      expect(user2).to_not be_valid
+    end
+  end
+
+  describe :employee_id do
+    it "cannot be nil" do
+      expect(FactoryBot.build(:user, employee_id: nil)).to_not be_valid
+    end
+
+    it "should be unique" do
+      user1 = FactoryBot.create(:user, employee_id: "TestUser1234")
+      user2 = FactoryBot.build(:user, employee_id: user1.employee_id)
+      expect(user2).to_not be_valid
     end
   end
 

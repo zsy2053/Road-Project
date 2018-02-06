@@ -25,8 +25,8 @@ class User < ApplicationRecord
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, presence: true
-  validates :username, uniqueness: true
-  validates :username, presence: true
+  validates :username, presence: true, uniqueness: true
+  validates :employee_id, presence: true, uniqueness: true
   validates :suspended, :inclusion => { :in => [true, false] }
 
   attr_accessor :ignore_password
