@@ -165,7 +165,7 @@ RSpec.describe StationsController, type: :controller do
 
   describe "POST #create" do
     let(:contract) {FactoryBot.create(:contract)}
-    let(:valid_attributes) { { :contract_id => contract.id } }
+    let(:valid_attributes) { FactoryBot.attributes_for(:station, :contract_id => contract.id) }
     subject { post :create, params: { :station => valid_attributes } }
 
     context "for anonymous user" do
