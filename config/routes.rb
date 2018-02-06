@@ -13,6 +13,9 @@ Rails.application.routes.draw do
 
   resources :transfer_orders, only: [:index, :show]
   post 'transfer_orders/', to: 'transfer_orders#create_or_update'
+  
+  resources :operators, only: [:index, :show, :create, :update]
+  get 'operators/showbadge/:badge', to: 'operators#showbadge'
 
   post 'password/forgot', to: 'passwords#forgot'
   post 'password/reset', to: 'passwords#reset'
