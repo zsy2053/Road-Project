@@ -7,6 +7,10 @@ RSpec.describe Station, type: :model do
     expect(FactoryBot.build(:station)).to be_valid
   end
   
+  it { should validate_presence_of(:name) }
+    
+  it { should validate_presence_of(:code) }
+  
   describe "name attributes" do
     let!(:contract) { FactoryBot.create(:contract) }
     let!(:station1) { FactoryBot.create(:station, name: "Station 1", contract: contract) }
