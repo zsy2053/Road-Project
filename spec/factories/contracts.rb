@@ -5,6 +5,6 @@ FactoryBot.define do
     planned_end 10.months.ago
     actual_start 16.months.ago
     actual_end 1.months.ago
-    minimum_offset 2
+    minimum_offset 1
   end
 end

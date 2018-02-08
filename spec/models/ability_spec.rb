@@ -135,6 +135,102 @@ RSpec.shared_examples "a user who can manage all sites" do |role|
   end
 end
 
+RSpec.shared_examples "a user who can create but not modify car road orders for their contracts" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:other_contract) { FactoryBot.create(:contract) }
+  
+  let(:road_order) { FactoryBot.create(:road_order, contract: contract, station: FactoryBot.create(:station, contract: contract)) }
+  let(:other_road_order) { FactoryBot.create(:road_order, contract: other_contract, station: FactoryBot.create(:station, contract: other_contract)) }
+  
+  # car road order objects use 'build' so the are not considered to be persisted
+  let(:car_road_order) { FactoryBot.build(:car_road_order, road_order: road_order) }
+  let(:other_car_road_order) { FactoryBot.build(:car_road_order, road_order: other_road_order) }
+  
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  
+  let(:ability) { Ability.new(this_user) }
+  
+  it "cannot create a car road order for an inaccessible contract" do
+    expect(ability).to be_able_to(:create, CarRoadOrder)
+    expect(other_car_road_order).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_car_road_order)
+  end
+  
+  it "can create a car road order for an accessible contract" do
+    expect(ability).to be_able_to(:create, CarRoadOrder)
+    expect(car_road_order).to_not be_persisted
+    expect(ability).to be_able_to(:create, car_road_order)
+  end
+  
+  it "cannot update a car road order" do
+    expect(ability).to_not be_able_to(:update, CarRoadOrder)
+  end
+  
+  it "cannot delete a car road order" do
+    expect(ability).to_not be_able_to(:delete, CarRoadOrder)
+  end
+end
+
+RSpec.shared_examples "a user who can only read their car road orders" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:other_contract) { FactoryBot.create(:contract) }
+
+  let!(:road_order) { FactoryBot.create(:road_order, contract: contract, station: FactoryBot.create(:station, contract: contract)) }
+  let!(:other_road_order) { FactoryBot.create(:road_order, contract: other_contract, station: FactoryBot.create(:station, contract: other_contract)) }
+  
+  let!(:car_road_order) { FactoryBot.create(:car_road_order, road_order: road_order) }
+  let!(:other_car_road_order) { FactoryBot.create(:car_road_order, road_order: other_road_order) }
+  
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  
+  let(:ability) { Ability.new(this_user) }
+  
+  it "can read car road orders for an accessible contract" do
+    expect(ability).to be_able_to(:read, car_road_order)
+  end
+  
+  it "cannot read car road orders for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:read, other_car_road_order)
+  end
+end
+
+RSpec.shared_examples "a user who can read all car road orders" do |role|
+  let!(:this_user) { FactoryBot.build_stubbed(:user, role: role) }
+  let!(:ability) { Ability.new(this_user) }
+  let!(:car_road_order) { FactoryBot.build_stubbed(:car_road_order) }
+  let!(:other_car_road_order) { FactoryBot.build_stubbed(:car_road_order) }
+  
+  before(:each) do
+    expect(this_user.accesses).to be_empty
+  end
+  
+  it "can read car road orders for an inaccessible contract" do
+    expect(ability).to be_able_to(:read, car_road_order)
+    expect(ability).to be_able_to(:read, other_car_road_order)
+  end
+end
+
+RSpec.shared_examples "a user who cannot modify car road orders" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  let!(:ability) { Ability.new(this_user) }
+  
+  it "cannot create a new car road order" do
+    expect(ability).to_not be_able_to(:create, CarRoadOrder)
+  end
+  
+  it "cannot update a car road order" do
+    expect(ability).to_not be_able_to(:update, CarRoadOrder)
+  end
+  
+  it "cannot delete a car road order" do
+    expect(ability).to_not be_able_to(:delete, CarRoadOrder)
+  end
+end
+
 RSpec.shared_examples "a user who can only read their own site" do |role|
   let!(:site) { FactoryBot.create(:site) }
   let!(:other_site) { FactoryBot.create(:site) }
@@ -318,6 +414,9 @@ describe "Ability" do
     it_should_behave_like "a user who can only read their road orders", "supervisor"
     it_should_behave_like "a user who cannot modify road orders", "supervisor"
     
+    it_should_behave_like "a user who can only read their car road orders", "supervisor"
+    it_should_behave_like "a user who can create but not modify car road orders for their contracts", "supervisor"
+    
     it_should_behave_like "a user who can only read their back orders", "supervisor"
     it_should_behave_like "a user who cannot modify back orders", "supervisor"    
   end
@@ -363,6 +462,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can only read their road orders", "planner"
     it_should_behave_like "a user who cannot modify road orders", "planner"
+    
+    it_should_behave_like "a user who can only read their car road orders", "planner"
+    it_should_behave_like "a user who cannot modify car road orders", "planner"
     
     it_should_behave_like "a user who can only read their back orders", "planner"
     it_should_behave_like "a user who can create but not modify back orders for their contracts", "planner"
@@ -410,6 +512,9 @@ describe "Ability" do
     it_should_behave_like "a user who can only read their road orders", "method_engineer"
     it_should_behave_like "a user who can create but not modify road orders for their contracts", "method_engineer"
     
+    it_should_behave_like "a user who can only read their car road orders", "method_engineer"
+    it_should_behave_like "a user who cannot modify car road orders", "method_engineer"
+    
     it_should_behave_like "a user who can only read their back orders", "method_engineer"
     it_should_behave_like "a user who cannot modify back orders", "method_engineer"    
   end
@@ -456,6 +561,9 @@ describe "Ability" do
     it_should_behave_like "a user who can only read their road orders", "quality"
     it_should_behave_like "a user who cannot modify road orders", "quality"
     
+    it_should_behave_like "a user who can only read their car road orders", "quality"
+    it_should_behave_like "a user who cannot modify car road orders", "quality"
+    
     it_should_behave_like "a user who can only read their back orders", "quality"
     it_should_behave_like "a user who cannot modify back orders", "quality"    
   end
@@ -501,6 +609,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can only read their road orders", "station"
     it_should_behave_like "a user who cannot modify road orders", "station"
+    
+    it_should_behave_like "a user who can only read their car road orders", "station"
+    it_should_behave_like "a user who cannot modify car road orders", "station"
     
     it_should_behave_like "a user who can only read their back orders", "station"
     it_should_behave_like "a user who cannot modify back orders", "station"    
@@ -586,6 +697,9 @@ describe "Ability" do
     it_should_behave_like "a user who can only read their road orders", "admin"
     it_should_behave_like "a user who cannot modify road orders", "admin"
     
+    it_should_behave_like "a user who can only read their car road orders", "admin"
+    it_should_behave_like "a user who cannot modify car road orders", "admin"
+    
     it_should_behave_like "a user who can only read their back orders", "admin"
     it_should_behave_like "a user who cannot modify back orders", "admin"    
   end
@@ -619,6 +733,9 @@ describe "Ability" do
     
     it_should_behave_like "a user who can read all road orders", "super_admin"
     it_should_behave_like "a user who cannot modify road orders", "super_admin"
+    
+    it_should_behave_like "a user who can read all car road orders", "super_admin"
+    it_should_behave_like "a user who cannot modify car road orders", "super_admin"
     
     it_should_behave_like "a user who can read all back orders", "super_admin"
     it_should_behave_like "a user who cannot modify back orders", "super_admin"    

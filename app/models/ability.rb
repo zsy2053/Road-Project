@@ -12,7 +12,7 @@ class Ability
 
       if user.super_admin?
         can :manage, [Site, Station, Contract, User, Access, Operator]
-        can :read, [RoadOrder, TransferOrder, BackOrder]
+        can :read, [RoadOrder, CarRoadOrder, TransferOrder, BackOrder]
       elsif user.api_trackware?
         can :manage, TransferOrder
       else
@@ -23,12 +23,16 @@ class Ability
         can :read, Contract, :id => user_contracts
         can :read, Station, :contract_id => user_contracts
         can :read, RoadOrder, :contract_id => user_contracts
+        can :read, CarRoadOrder, road_order: { :contract_id => user_contracts }
         can :read, BackOrder, :contract_id => user_contracts
         can :read, User, contracts: { :id => user_contracts }, :role => admin_accessible_roles
 
         # method engineers can also create road orders for their contracts
         can :create, RoadOrder, :contract_id => user_contracts if user.method_engineer?
-
+        
+        # supervisors can also create car road orders for their contracts
+        can :create, CarRoadOrder, road_order: { :contract_id => user_contracts } if user.supervisor?
+        
         # planners can also create back orders for their contracts
         can :create, BackOrder, :contract_id => user_contracts if user.planner?
 

@@ -22,7 +22,7 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
     # this is done to save calls against S3
     let!(:road_order) { FactoryBot.create(:road_order,
       car_type: "COACH",
-      start_car: 30,
+      start_car: 1,
       work_centre: "Work Centre",
       module: "Module",
       day_shifts: {
@@ -60,7 +60,7 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
   context "road order with no definitions" do
     let!(:road_order) { FactoryBot.create(:road_order,
       car_type: "COACH",
-      start_car: 30,
+      start_car: 1,
       work_centre: "Work Centre",
       module: "Module",
       day_shifts: {
@@ -103,7 +103,7 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
     end
     
     it "has expected start_car" do
-      expect(subject['start_car']).to eq(30)
+      expect(subject['start_car']).to eq(1)
     end
     
     it "has expected work_centre" do
@@ -150,7 +150,7 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
   context "road order with two definitions" do
     let!(:road_order) { FactoryBot.create(:road_order,
       car_type: "COACH",
-      start_car: 30,
+      start_car: 1,
       work_centre: "Work Centre",
       module: "Module",
       day_shifts: {
@@ -223,7 +223,7 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
     end
     
     it "has expected start_car" do
-      expect(subject['start_car']).to eq(30)
+      expect(subject['start_car']).to eq(1)
     end
     
     it "has expected work_centre" do

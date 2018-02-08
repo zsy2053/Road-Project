@@ -8,7 +8,7 @@ RSpec.describe RoadOrdersController, type: :controller do
     let!(:station1) { FactoryBot.create(:station, :contract_id => contract1.id, :name => "station 1") }
     let!(:station2) { FactoryBot.create(:station, :contract_id => contract2.id, :name => "station 2") }
     let!(:road_order1) { FactoryBot.create(:road_order, :station_id => station1.id, :car_type => "A", :start_car => 1) }
-    let!(:road_order2) { FactoryBot.create(:road_order, :station_id => station2.id, :car_type => "B", :start_car => 2) }
+    let!(:road_order2) { FactoryBot.create(:road_order, :station_id => station2.id, :car_type => "B", :start_car => 1) }
   
     subject { get :index, {} }
     
@@ -89,7 +89,7 @@ RSpec.describe RoadOrdersController, type: :controller do
     let(:valid_attributes) {
       {
         car_type: 'Coach',
-        start_car: 123,
+        start_car: 1,
         station_id: station.id,
         file_path: 'file_path',
         work_centre: "Bonding",
@@ -155,7 +155,7 @@ RSpec.describe RoadOrdersController, type: :controller do
           
           # check road order attributes
           expect(result.car_type).to eq('Coach')
-          expect(result.start_car).to eq(123)
+          expect(result.start_car).to eq(1)
           expect(result.station.id).to eq(station.id)
           expect(result.author.id).to eq(author.id)
           # TODO expect(result.file_path).to eq('file_path')

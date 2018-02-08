@@ -25,7 +25,7 @@ RSpec.describe RoadOrderSerializer, type: :serializer do
       contract: contract,
       station: station,
       car_type: "COACH",
-      start_car: 30,
+      start_car: 1,
       work_centre: "Work Centre",
       module: "Module",
       day_shifts: {
@@ -82,7 +82,9 @@ RSpec.describe RoadOrderSerializer, type: :serializer do
         'station',
         'station_name',
         'contract',
-        'contract_name'
+        'contract_name',
+        'day_shifts',
+        'max_car'
       )
     end
     
@@ -95,7 +97,7 @@ RSpec.describe RoadOrderSerializer, type: :serializer do
     end
     
     it "has expected start_car" do
-      expect(subject['start_car']).to eq(30)
+      expect(subject['start_car']).to eq(1)
     end
     
     it "has expected work_centre" do
@@ -112,6 +114,32 @@ RSpec.describe RoadOrderSerializer, type: :serializer do
     
     it "has expect contract" do
       expect(subject['contract_name']).to eq("Contract Name")
+    end
+    
+    describe "with no cars associated" do
+      before(:each) do
+        expect(CarRoadOrder.where(road_order_id: road_order.id).count).to eq(0)
+      end
+      
+      it "has a max_car of 0" do
+        expect(subject['max_car']).to eq(0)
+      end
+    end
+    
+    describe "with two cars associated" do
+      let!(:car1) { FactoryBot.create(:car, car_type: road_order.car_type, number: 1) }
+      let!(:car2) { FactoryBot.create(:car, car_type: road_order.car_type, number: 2) }
+      
+      let!(:car_road_order1) { FactoryBot.create(:car_road_order, car: car1, road_order: road_order) }
+      let!(:car_road_order2) { FactoryBot.create(:car_road_order, car: car2, road_order: road_order) }
+      
+      before(:each) do
+        expect(CarRoadOrder.where(road_order_id: road_order.id).count).to eq(2)
+      end
+      
+      it "has a max_car of 2" do
+        expect(subject['max_car']).to eq(2)
+      end
     end
   end
 end

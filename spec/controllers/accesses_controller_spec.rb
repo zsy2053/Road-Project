@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe AccessesController, type: :controller do
-
-	describe "#Create" do
+  
+	describe "create" do
 		let(:user) { FactoryBot.create(:supervisor_user) }
 		let(:contract) { FactoryBot.create(:contract) }
 		subject { post :create, params: { :access => { :contract_id => contract.id, :user_id => user.id } } }
