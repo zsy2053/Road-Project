@@ -4,6 +4,8 @@ class BackOrder < ApplicationRecord
   belongs_to :station
   belongs_to :contract
   
+  validates :cri, :focused_part_flag, :inclusion => {:in => [true, false]}
+  
   def set_contract
       self.contract = self.station.contract unless self.contract == self.station.contract
   end
