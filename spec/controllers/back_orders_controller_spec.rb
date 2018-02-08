@@ -57,7 +57,7 @@ RSpec.describe BackOrdersController, type: :controller do
         "contract_id" => contract1.id,
         "bom_exp_no" => "bom_exp_no",
         'mrp_cont' => "mrp_cont",
-        "cri" => "cri",
+        "cri" => true,
         "component" => "component",
         "material_description" => "material_description",
         "sort_string" => "sort_string",
@@ -66,7 +66,7 @@ RSpec.describe BackOrdersController, type: :controller do
         "item_text_line_1" => "item_text_line_1",
         "qty" => 0,
         "vendor_name" => "vendor_name",
-        "focused_part_flag" => "focused_part_flag"
+        "focused_part_flag" => true
       }]
     }
     
@@ -77,7 +77,7 @@ RSpec.describe BackOrdersController, type: :controller do
         "contract_id" => contract1.id,
         "bom_exp_no" => "1 bom_exp_no",
         'mrp_cont' => "1 mrp_cont",
-        "cri" => "1 cri",
+        "cri" => true,
         "component" => "1 component",
         "material_description" => "1 material_description",
         "sort_string" => "1 sort_string",
@@ -86,14 +86,14 @@ RSpec.describe BackOrdersController, type: :controller do
         "item_text_line_1" => "1 item_text_line_1",
         "qty" => 1,
         "vendor_name" => "1 vendor_name",
-        "focused_part_flag" => "1 focused_part_flag"
+        "focused_part_flag" => true
       }, {
         "station_id" => station1.id,
         "station_name" => station1.name,
         "contract_id" => contract1.id,
         "bom_exp_no" => "2 bom_exp_no",
         "mrp_cont" => "2 mrp_cont",
-        "cri" => "2 cri",
+        "cri" => true,
         "component" => "2 component",
         "material_description" => "2 material_description",
         "sort_string" => "2 sort_string",
@@ -102,7 +102,7 @@ RSpec.describe BackOrdersController, type: :controller do
         "item_text_line_1" => "2 item_text_line_1",
         "qty" => 2,
         "vendor_name" => "2 vendor_name",
-        "focused_part_flag" => "2 focused_part_flag"
+        "focused_part_flag" => true
       }        
     ]}
     
@@ -240,7 +240,7 @@ RSpec.describe BackOrdersController, type: :controller do
               "contract_id" => contract1.id,
               "bom_exp_no" => "1 bom_exp_no",
               'mrp_cont' => "1 mrp_cont",
-              "cri" => "1 cri",
+              "cri" => true,
               "component" => "1 component",
               "material_description" => "1 material_description",
               "sort_string" => "1 sort_string",
@@ -249,13 +249,13 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "1 item_text_line_1",
               "qty" => 1,
               "vendor_name" => "1 vendor_name",
-              "focused_part_flag" => "1 focused_part_flag",
+              "focused_part_flag" => true,
               "station_name" => station1.name
             }, {
               "contract_id" => contract1.id,
               "bom_exp_no" => "2 bom_exp_no",
               "mrp_cont" => "2 mrp_cont",
-              "cri" => "2 cri",
+              "cri" => true,
               "component" => "2 component",
               "material_description" => "2 material_description",
               "sort_string" => "2 sort_string",
@@ -264,7 +264,7 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "2 item_text_line_1",
               "qty" => 2,
               "vendor_name" => "2 vendor_name",
-              "focused_part_flag" => "2 focused_part_flag"
+              "focused_part_flag" => true
             }]
             
             back_order1 = FactoryBot.create(:back_order, :station_id => station1.id, :contract_id => contract1.id)
@@ -295,7 +295,7 @@ RSpec.describe BackOrdersController, type: :controller do
               "contract_id" => contract1.id,
               "bom_exp_no" => "1 bom_exp_no",
               'mrp_cont' => "1 mrp_cont",
-              "cri" => "1 cri",
+              "cri" => true,
               "component" => "1 component",
               "material_description" => "1 material_description",
               "sort_string" => "1 sort_string",
@@ -304,13 +304,13 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "1 item_text_line_1",
               "qty" => 1,
               "vendor_name" => "1 vendor_name",
-              "focused_part_flag" => "1 focused_part_flag",
+              "focused_part_flag" => true,
               "station_name" => station1.name
             }, {
               "contract_id" => contract1.id,
               "bom_exp_no" => "2 bom_exp_no",
               "mrp_cont" => "2 mrp_cont",
-              "cri" => "2 cri",
+              "cri" => true,
               "component" => "2 component",
               "material_description" => "2 material_description",
               "sort_string" => "2 sort_string",
@@ -319,7 +319,7 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "2 item_text_line_1",
               "qty" => 2,
               "vendor_name" => "2 vendor_name",
-              "focused_part_flag" => "2 focused_part_flag",
+              "focused_part_flag" => true,
               "station_name" => 'bdbdf'
             }]
             
@@ -352,7 +352,7 @@ RSpec.describe BackOrdersController, type: :controller do
               "contract_id" => contract1.id,
               "bom_exp_no" => "1 bom_exp_no",
               'mrp_cont' => "1 mrp_cont",
-              "cri" => "1 cri",
+              "cri" => true,
               "component" => "1 component",
               "material_description" => "1 material_description",
               "sort_string" => "1 sort_string",
@@ -361,14 +361,14 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "1 item_text_line_1",
               "qty" => 1,
               "vendor_name" => "1 vendor_name",
-              "focused_part_flag" => "1 focused_part_flag"
+              "focused_part_flag" => true
             }, {
               "station_id" => station1.id,
               "station_name" => station1.name,
               "contract_id" => contract2.id,
               "bom_exp_no" => "2 bom_exp_no",
               "mrp_cont" => "2 mrp_cont",
-              "cri" => "2 cri",
+              "cri" => true,
               "component" => "2 component",
               "material_description" => "2 material_description",
               "sort_string" => "2 sort_string",
@@ -377,7 +377,7 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "2 item_text_line_1",
               "qty" => 2,
               "vendor_name" => "2 vendor_name",
-              "focused_part_flag" => "2 focused_part_flag"
+              "focused_part_flag" => true
             }]
             
             back_order1 =FactoryBot.create(:back_order, :station_id => station1.id, :contract_id => contract1.id)
@@ -417,7 +417,8 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "1 item_text_line_1",
               "qty" => 1,
               "vendor_name" => "1 vendor_name",
-              "focused_part_flag" => "1 focused_part_flag"
+              "focused_part_flag" => true,
+              "cri" => true
             }, {
               "station_id" => station1.id,
               "station_name" => station1.name,
@@ -431,7 +432,8 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "1 item_text_line_1",
               "qty" => 1,
               "vendor_name" => "1 vendor_name",
-              "focused_part_flag" => "1 focused_part_flag"
+              "focused_part_flag" => true,
+              "cri" => true
             }]
             
             back_order1 =FactoryBot.create(:back_order, :station_id => station1.id, :contract_id => contract1.id)
@@ -471,7 +473,8 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "1 item_text_line_1",
               "qty" => 1,
               "vendor_name" => "1 vendor_name",
-              "focused_part_flag" => "1 focused_part_flag"
+              "focused_part_flag" => true,
+              "cri" => true
             }, {
               "contract_id" => contract1.id,
               "bom_exp_no" => "1 bom_exp_no",
@@ -484,7 +487,8 @@ RSpec.describe BackOrdersController, type: :controller do
               "item_text_line_1" => "1 item_text_line_1",
               "qty" => 1,
               "vendor_name" => "1 vendor_name",
-              "focused_part_flag" => "1 focused_part_flag"
+              "focused_part_flag" => true,
+              "cri" => true
             }]
             
             back_order1 =FactoryBot.create(:back_order, :station_id => station1.id, :contract_id => contract1.id)

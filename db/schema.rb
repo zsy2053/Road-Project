@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180201161956) do
+ActiveRecord::Schema.define(version: 20180208155408) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -26,7 +26,6 @@ ActiveRecord::Schema.define(version: 20180201161956) do
     t.bigint "station_id"
     t.bigint "contract_id"
     t.string "mrp_cont"
-    t.string "cri"
     t.string "component"
     t.string "material_description"
     t.string "sort_string"
@@ -37,7 +36,8 @@ ActiveRecord::Schema.define(version: 20180201161956) do
     t.string "vendor_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "focused_part_flag"
+    t.boolean "cri", default: false
+    t.boolean "focused_part_flag", default: false
     t.index ["contract_id"], name: "index_back_orders_on_contract_id"
     t.index ["station_id"], name: "index_back_orders_on_station_id"
   end
