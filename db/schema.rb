@@ -42,6 +42,26 @@ ActiveRecord::Schema.define(version: 20180208155408) do
     t.index ["station_id"], name: "index_back_orders_on_station_id"
   end
 
+  create_table "car_road_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "car_id"
+    t.bigint "road_order_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_id", "road_order_id"], name: "index_car_road_orders_on_car_id_and_road_order_id", unique: true
+    t.index ["car_id"], name: "index_car_road_orders_on_car_id"
+    t.index ["road_order_id"], name: "index_car_road_orders_on_road_order_id"
+  end
+
+  create_table "cars", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "car_type"
+    t.integer "number"
+    t.bigint "contract_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contract_id"], name: "index_cars_on_contract_id"
+    t.index ["number", "car_type", "contract_id"], name: "index_cars_on_number_and_car_type_and_contract_id", unique: true
+  end
+
   create_table "contracts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "site_id"
     t.string "status", default: "draft", null: false
@@ -76,6 +96,19 @@ ActiveRecord::Schema.define(version: 20180208155408) do
     t.index ["road_order_id"], name: "index_definitions_on_road_order_id"
   end
 
+  create_table "movements", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "definition_id"
+    t.integer "actual_duration"
+    t.integer "percent_complete"
+    t.bigint "car_road_order_id"
+    t.text "comments"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_road_order_id"], name: "index_movements_on_car_road_order_id"
+    t.index ["definition_id", "car_road_order_id"], name: "index_movements_on_definition_id_and_car_road_order_id", unique: true
+    t.index ["definition_id"], name: "index_movements_on_definition_id"
+  end
+
   create_table "operators", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "first_name"
     t.string "last_name"
@@ -86,6 +119,15 @@ ActiveRecord::Schema.define(version: 20180208155408) do
     t.datetime "updated_at", null: false
     t.index ["badge"], name: "index_operators_on_badge", unique: true
     t.index ["employee_number"], name: "index_operators_on_employee_number", unique: true
+  end
+
+  create_table "positions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "name"
+    t.bigint "car_road_order_id"
+    t.boolean "allows_multiple"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_road_order_id"], name: "index_positions_on_car_road_order_id"
   end
 
   create_table "road_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -202,8 +244,14 @@ ActiveRecord::Schema.define(version: 20180208155408) do
   add_foreign_key "accesses", "users"
   add_foreign_key "back_orders", "contracts"
   add_foreign_key "back_orders", "stations"
+  add_foreign_key "car_road_orders", "cars"
+  add_foreign_key "car_road_orders", "road_orders"
+  add_foreign_key "cars", "contracts"
   add_foreign_key "contracts", "sites"
   add_foreign_key "definitions", "road_orders"
+  add_foreign_key "movements", "car_road_orders"
+  add_foreign_key "movements", "definitions"
+  add_foreign_key "positions", "car_road_orders"
   add_foreign_key "road_orders", "contracts"
   add_foreign_key "road_orders", "stations"
   add_foreign_key "road_orders", "users", column: "author_id"
