@@ -19,10 +19,24 @@ class PasswordsController < ApplicationController
     end
   end
 
+  def verify
+    if params[:reset_token].blank?
+      return render json: { error: 'No token provided'}, status: :unprocessable_entity
+    end
+
+    @user = User.find_by(reset_password_token: params[:reset_token])
+
+    if @user && @user.reset_password_period_valid?
+      render json: { status: 'ok' }, status: :ok
+    else
+      render json: { error: 'invalid reset password token' }, status: :unprocessable_entity
+    end
+  end
+
   def reset
     token = params[:token].to_s
     user = User.find_by(reset_password_token: token)
-    
+
     if user && user.reset_password_period_valid?
       if user.reset_password(params[:password], params[:password])
         render json: { status: 'ok' }, status: :ok

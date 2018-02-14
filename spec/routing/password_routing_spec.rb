@@ -11,5 +11,9 @@ RSpec.describe PasswordsController, type: :routing do
       expect(:post => "/password/reset").to route_to("passwords#reset")
     end
 
+    it "routes to #verify" do
+      expect(:get => "/token/verify").to route_to("passwords#verify")
+    end
+
   end
 end
