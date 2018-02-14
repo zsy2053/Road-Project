@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180208155408) do
+ActiveRecord::Schema.define(version: 20180214211652) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -117,8 +117,10 @@ ActiveRecord::Schema.define(version: 20180208155408) do
     t.boolean "suspended", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "site_id"
     t.index ["badge"], name: "index_operators_on_badge", unique: true
     t.index ["employee_number"], name: "index_operators_on_employee_number", unique: true
+    t.index ["site_id"], name: "index_operators_on_site_id"
   end
 
   create_table "positions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -251,6 +253,7 @@ ActiveRecord::Schema.define(version: 20180208155408) do
   add_foreign_key "definitions", "road_orders"
   add_foreign_key "movements", "car_road_orders"
   add_foreign_key "movements", "definitions"
+  add_foreign_key "operators", "sites"
   add_foreign_key "positions", "car_road_orders"
   add_foreign_key "road_orders", "contracts"
   add_foreign_key "road_orders", "stations"

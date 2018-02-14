@@ -12,4 +12,6 @@ RSpec.describe Operator, type: :model do
   it { should validate_presence_of(:employee_number) }
 
   it { should validate_presence_of(:badge) }
+  
+  it { should belong_to(:site) }
 end

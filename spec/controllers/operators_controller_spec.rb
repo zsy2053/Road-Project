@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe OperatorsController, type: :controller do
+  let(:site) { FactoryBot.create(:site) }
   describe "GET #index" do
-    let!(:operator1) { FactoryBot.create(:operator, :badge => "operator1") }
-    let!(:operator2) { FactoryBot.create(:operator, :badge => "operator2") }
+    let!(:operator1) { FactoryBot.create(:operator, :site => site, :badge => "operator1") }
+    let!(:operator2) { FactoryBot.create(:operator, :site => site, :badge => "operator2") }
 
     subject { get :index, {} }
 
@@ -16,7 +17,7 @@ RSpec.describe OperatorsController, type: :controller do
 
     context "for authenticated user with access" do
       before(:each) do
-        @super_admin = FactoryBot.create(:super_admin_user)
+        @super_admin = FactoryBot.create(:super_admin_user, :site => site)
         add_jwt_header(request, @super_admin)
       end
 
@@ -36,7 +37,7 @@ RSpec.describe OperatorsController, type: :controller do
 
     context "for authenticate user without access" do
       before(:each) do
-        @method_engineer = FactoryBot.create(:method_engineer_user)
+        @method_engineer = FactoryBot.create(:method_engineer_user, :site => site)
         add_jwt_header(request, @method_engineer)
       end
 
@@ -48,7 +49,7 @@ RSpec.describe OperatorsController, type: :controller do
   end
 
   describe "GET #show" do
-    let!(:operator1) { FactoryBot.create(:operator) }
+    let!(:operator1) { FactoryBot.create(:operator, :site => site) }
 
     context "for anonymous user" do
       it "returns a failed response without login" do
@@ -59,7 +60,7 @@ RSpec.describe OperatorsController, type: :controller do
 
     context "for authenticate user with access" do
       before(:each) do
-        @super_admin = FactoryBot.create(:super_admin_user)
+        @super_admin = FactoryBot.create(:super_admin_user, :site => site)
         add_jwt_header(request, @super_admin)
       end
 
@@ -71,7 +72,7 @@ RSpec.describe OperatorsController, type: :controller do
 
     context "for authenticate user without access" do
       before(:each) do
-        @method_engineer = FactoryBot.create(:method_engineer_user)
+        @method_engineer = FactoryBot.create(:method_engineer_user, :site => site)
         add_jwt_header(request, @method_engineer)
       end
 
@@ -89,7 +90,8 @@ RSpec.describe OperatorsController, type: :controller do
         last_name: "test2",
         employee_number: "tesnt12345",
         badge: "test215235",
-        suspended: true
+        suspended: true,
+        site_id: site.id
       }
     }
 
@@ -109,7 +111,7 @@ RSpec.describe OperatorsController, type: :controller do
     context "for authenticated user" do
       describe "with access" do
         before(:each) do
-          @super_admin = FactoryBot.create(:super_admin_user)
+          @super_admin = FactoryBot.create(:super_admin_user, :site => site)
           add_jwt_header(request, @super_admin)
         end
         
@@ -141,7 +143,7 @@ RSpec.describe OperatorsController, type: :controller do
       
       describe "without access" do
         before(:each) do
-          @station_user = FactoryBot.create(:station_user)
+          @station_user = FactoryBot.create(:station_user, :site => site)
           add_jwt_header(request, @station_user)
         end
       
@@ -158,7 +160,7 @@ RSpec.describe OperatorsController, type: :controller do
   end
 
   describe "GET #showbadge" do
-    let!(:operator1) { FactoryBot.create(:operator, :badge => "operator1") }
+    let!(:operator1) { FactoryBot.create(:operator, :site => site, :badge => "operator1") }
     context "for anonymous user" do
       it "returns unauthorized" do
         get :showbadge, params: { :badge => operator1.badge }
@@ -168,7 +170,7 @@ RSpec.describe OperatorsController, type: :controller do
 
     context "for authenticated user with access" do
       before(:each) do
-        @super_admin = FactoryBot.create(:super_admin_user)
+        @super_admin = FactoryBot.create(:super_admin_user, :site => site)
         add_jwt_header(request, @super_admin)
       end
 
@@ -186,7 +188,7 @@ RSpec.describe OperatorsController, type: :controller do
     
     context "for authenticated user but have no access" do
       before(:each) do
-        @method_engineer = FactoryBot.create(:method_engineer_user)
+        @method_engineer = FactoryBot.create(:method_engineer_user, :site => site)
         add_jwt_header(request, @method_engineer)
       end
       
