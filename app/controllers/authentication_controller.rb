@@ -13,7 +13,7 @@ class AuthenticationController < ApplicationController
         render_error(['Something unexpected happened!'], :expectation_failed)
       end
     else
-      render_error(['User not found'], :not_found)
+      render_error(['Invalid Username/Password'], :unauthorized)
     end
   end
 

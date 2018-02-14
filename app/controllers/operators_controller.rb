@@ -73,7 +73,8 @@ class OperatorsController < ApplicationController
         :last_name,
         :employee_number,
         :badge,
-        :suspended
+        :suspended,
+        :site_id
       )
     end
 end
