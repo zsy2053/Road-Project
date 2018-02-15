@@ -8,9 +8,10 @@ class ApplicationController < ActionController::API
       not_authenticated
       return
     end
+    
     @current_user = User.find(auth_token[:user_id])
     unless @current_user.active_for_authentication?
-      not_authenticated
+      suspended
       return
     end
   rescue JWT::VerificationError, JWT::DecodeError
@@ -21,6 +22,10 @@ class ApplicationController < ActionController::API
   
   def not_authenticated
     render json: { errors: ['Not Authenticated'] }, status: :unauthorized
+  end
+  
+  def suspended
+    render json: { errors: ['Account Suspended'] }, status: :locked
   end
 
   def http_token
