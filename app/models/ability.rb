@@ -29,16 +29,17 @@ class Ability
 
         # method engineers can also create road orders for their contracts
         can :create, RoadOrder, :contract_id => user_contracts if user.method_engineer?
-        
+
         # supervisors can also create car road orders for their contracts
         can :create, CarRoadOrder, road_order: { :contract_id => user_contracts } if user.supervisor?
-        
+
         # planners can also create back orders for their contracts
         can :create, BackOrder, :contract_id => user_contracts if user.planner?
 
         if user.admin?
           can :manage, User, :site_id => user.site_id, :role => admin_accessible_roles
           can :manage, Operator, :site_id => user.site_id
+          can :manage, Station, :contract_id => user_contracts
           can :manage, Access, :contract_id => user_contracts, user: { site_id: user.site_id, role: admin_accessible_roles }
         end
 
