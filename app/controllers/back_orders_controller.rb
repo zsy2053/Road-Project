@@ -7,6 +7,12 @@ class BackOrdersController < ApplicationController
   # GET /back_orders
   def index
     @back_orders = BackOrder.accessible_by(current_ability)
+    
+    # filter by station id if provided
+    if params[:station_id]
+      @back_orders = @back_orders.where(station_id: params[:station_id])
+    end
+    
     render json: @back_orders
   end
 

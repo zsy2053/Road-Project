@@ -5,9 +5,11 @@ RSpec.describe BackOrdersController, type: :controller do
   describe "GET #index" do
     let!(:contract1) { FactoryBot.create(:contract, :name => "contract 1") }
     let!(:contract2) { FactoryBot.create(:contract, :name => "contract 2") }
-    let!(:station1) { FactoryBot.create(:station, :contract_id => contract1.id, :name => "station 1") }
+    let!(:station1a) { FactoryBot.create(:station, :contract_id => contract1.id, :name => "station 1a") }
+    let!(:station1b) { FactoryBot.create(:station, :contract_id => contract1.id, :name => "station 1b") }
     let!(:station2) { FactoryBot.create(:station, :contract_id => contract2.id, :name => "station 2") }
-    let!(:back_order1) { FactoryBot.create(:back_order, :station_id => station1.id, :contract_id => contract1.id) }
+    let!(:back_order1a) { FactoryBot.create(:back_order, :station_id => station1a.id, :contract_id => contract1.id) }
+    let!(:back_order1b) { FactoryBot.create(:back_order, :station_id => station1b.id, :contract_id => contract1.id) }
     let!(:back_order2) { FactoryBot.create(:back_order, :station_id => station2.id, :contract_id => contract2.id) }
   
     subject { get :index, {} }
@@ -19,7 +21,7 @@ RSpec.describe BackOrdersController, type: :controller do
       end
     end
 
-    context "for Planner" do
+    context "for planner with access to only one contract" do
       before(:each) do
         @planner = FactoryBot.create(:method_engineer_user)
         FactoryBot.create(:access, :contract_id => contract1.id, :user_id => @planner.id)
@@ -32,14 +34,61 @@ RSpec.describe BackOrdersController, type: :controller do
       end
 
       it "returns correct number of back order" do
-        # There should be 2 back_orders inside the database, and the user can only access one of them.
+        # There should be three back_orders inside the database, and the user can only access two of them.
         subject
         result = assigns(:back_orders)
-        expect(result.count).to eq(1)
-        expect(result).to include(back_order1)
+        expect(result.count).to eq(2)
+        expect(result).to include(back_order1a)
+        expect(result).to include(back_order1b)
         expect(result).not_to include(back_order2)
       end
-    end    
+      
+      it "returns correct number of back orders when filtering by station" do
+        # There should be three back_orders inside the database, and the user should only see
+        # the ones for the requested station.
+        get :index, params: { :station_id => station1a.id }
+        result = assigns(:back_orders)
+        expect(result.count).to eq(1)
+        expect(result).to include(back_order1a)
+        expect(result).not_to include(back_order1b)
+        expect(result).not_to include(back_order2)
+      end
+    end
+
+    context "for planner with access to contracts" do
+      before(:each) do
+        @planner = FactoryBot.create(:method_engineer_user)
+        FactoryBot.create(:access, :contract_id => contract1.id, :user_id => @planner.id)
+        FactoryBot.create(:access, :contract_id => contract2.id, :user_id => @planner.id)
+        add_jwt_header(request, @planner)
+      end
+
+      it "returns a success response if login" do
+        subject
+        expect(response).to have_http_status(:success)
+      end
+
+      it "returns correct number of back order" do
+        # There should be three back_orders inside the database, and the user can only access all of them.
+        subject
+        result = assigns(:back_orders)
+        expect(result.count).to eq(3)
+        expect(result).to include(back_order1a)
+        expect(result).to include(back_order1b)
+        expect(result).to include(back_order2)
+      end
+      
+      it "returns correct number of back orders when filtering by station" do
+        # There should be three back_orders inside the database, and the user should only see
+        # the ones for the requested station.
+        get :index, params: { :station_id => station1a.id }
+        result = assigns(:back_orders)
+        expect(result.count).to eq(1)
+        expect(result).to include(back_order1a)
+        expect(result).not_to include(back_order1b)
+        expect(result).not_to include(back_order2)
+      end
+    end
   end
   
   describe "POST create" do

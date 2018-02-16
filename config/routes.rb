@@ -2,7 +2,9 @@ Rails.application.routes.draw do
   post 'login' => 'authentication#authenticate_user'
   devise_for :users
   resources :users
-  resources :stations
+  resources :stations do
+    resources :back_orders, only: [:index]
+  end
   resources :contracts
   resources :sites, only: [:index]
   resources :road_orders, only: [:index, :show, :create]
