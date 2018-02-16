@@ -7,12 +7,10 @@ RSpec.describe StationsController, type: :routing do
       expect(:get => "/stations").to route_to("stations#index")
     end
 
-
     it "routes to #show" do
       expect(:get => "/stations/1").to route_to("stations#show", :id => "1")
     end
-
-
+    
     it "routes to #create" do
       expect(:post => "/stations").to route_to("stations#create")
     end
@@ -27,6 +25,10 @@ RSpec.describe StationsController, type: :routing do
 
     it "routes to #destroy" do
       expect(:delete => "/stations/1").to route_to("stations#destroy", :id => "1")
+    end
+    
+    it "routes to BackOrdersController#index for nested resource" do
+      expect(:get => "/stations/1/back_orders").to route_to("back_orders#index", :station_id => "1")
     end
 
   end
