@@ -48,4 +48,53 @@ RSpec.describe Position, type: :model do
     
     expect(position2).to be_valid
   end
+  
+  describe :operators do
+    let!(:car_road_order) { FactoryBot.create(:car_road_order) }
+    let!(:site) { car_road_order.road_order.station.contract.site }
+    
+    context "for a position that allows multiple" do
+      let(:allows_multiple) { true }
+      
+      it "can be empty" do
+        operators = []
+        position = FactoryBot.build(:position, car_road_order: car_road_order, allows_multiple: allows_multiple, operators: operators)
+        expect(position).to be_valid
+      end
+      
+      it "can have one operator" do
+        operators = FactoryBot.create_list(:operator, 1, site: site)
+        position = FactoryBot.build(:position, car_road_order: car_road_order, allows_multiple: allows_multiple, operators: operators)
+        expect(position).to be_valid
+      end
+      
+      it "can have more than one operator" do
+        operators = FactoryBot.create_list(:operator, 2, site: site)
+        position = FactoryBot.build(:position, car_road_order: car_road_order, allows_multiple: allows_multiple, operators: operators)
+        expect(position).to be_valid
+      end
+    end
+    
+    context "for a position that does not allow multiple" do
+      let(:allows_multiple) { false }
+      
+      it "can be empty" do
+        operators = []
+        position = FactoryBot.build(:position, car_road_order: car_road_order, allows_multiple: allows_multiple, operators: operators)
+        expect(position).to be_valid
+      end
+      
+      it "can have one operator" do
+        operators = FactoryBot.create_list(:operator, 1, site: site)
+        position = FactoryBot.build(:position, car_road_order: car_road_order, allows_multiple: allows_multiple, operators: operators)
+        expect(position).to be_valid
+      end
+      
+      it "cannot have more than one operator" do
+        operators = FactoryBot.create_list(:operator, 2, site: site)
+        position = FactoryBot.build(:position, car_road_order: car_road_order, allows_multiple: allows_multiple, operators: operators)
+        expect(position).to_not be_valid
+      end
+    end
+  end
 end
