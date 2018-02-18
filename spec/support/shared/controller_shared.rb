@@ -130,3 +130,72 @@ shared_examples_for "reads station by id based on contract access" do
     expect { get :show, params: {:id => station2.id} }.to raise_error(CanCan::AccessDenied)
   end
 end
+
+shared_examples_for "has no ability for this action with catched CanCan::AccessDenied error" do
+  before(:each) do
+    @user = one_user
+    FactoryBot.create(:access, :contract_id => contract.id, :user_id => @user.id)
+    add_jwt_header(request, @user)
+  end
+  it "fails to do this action" do
+    subject
+    expect(response).to have_http_status(:forbidden)
+  end
+end
+
+shared_examples_for "can update production_critical attribute of movements for their contracts" do
+  
+  before(:each) do
+    @user = one_user
+    FactoryBot.create(:access, :contract_id => contract.id, :user_id => @user.id)
+    add_jwt_header(request, @user)
+  end
+  
+  it "should update production_critical" do
+    expect(update_movement.production_critical).to be true
+    
+    subject
+    update_movement.reload
+    
+    expect(update_movement.production_critical).to be false
+  end
+end
+
+shared_examples_for "can update quality_critical attribute of movements for their contracts" do
+  
+  before(:each) do
+    @user = one_user
+    FactoryBot.create(:access, :contract_id => contract.id, :user_id => @user.id)
+    add_jwt_header(request, @user)
+  end
+  
+  it "should update production_critical" do
+    expect(update_movement.quality_critical).to  be true
+    
+    subject
+    update_movement.reload
+    
+    expect(update_movement.quality_critical).to be false
+  end
+end
+
+shared_examples_for "cannot update this attribute" do
+  
+  before(:each) do
+    @user = one_user
+    FactoryBot.create(:access, :contract_id => contract.id, :user_id => @user.id)
+    add_jwt_header(request, @user)
+  end
+  
+  it "should update production_critical" do
+    expect(update_movement.production_critical).to be true
+    expect(update_movement.quality_critical).to  be true
+    
+    subject
+    update_movement.reload
+    
+    expect(response).to have_http_status(:unprocessable_entity)
+    expect(update_movement.production_critical).to be true
+    expect(update_movement.quality_critical).to be true
+  end
+end
