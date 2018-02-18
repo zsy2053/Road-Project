@@ -12,7 +12,7 @@ class Ability
 
       if user.super_admin?
         can :manage, [Site, Station, Contract, User, Access, Operator]
-        can :read, [RoadOrder, CarRoadOrder, TransferOrder, BackOrder]
+        can :read, [RoadOrder, CarRoadOrder, TransferOrder, BackOrder, Movement]
       elsif user.api_trackware?
         can :manage, TransferOrder
       else
@@ -25,8 +25,9 @@ class Ability
         can :read, RoadOrder, :contract_id => user_contracts
         can :read, CarRoadOrder, road_order: { :contract_id => user_contracts }
         can :read, BackOrder, :contract_id => user_contracts
-        can :read, User, contracts: { :id => user_contracts }, :role => admin_accessible_roles
-
+        can :read, User, contracts: { :id => user_contracts }, :role => admin_accessible_roles       
+        can :read, Movement, road_order: { :contract_id => user_contracts }
+        
         # method engineers can also create road orders for their contracts
         can :create, RoadOrder, :contract_id => user_contracts if user.method_engineer?
 
@@ -45,14 +46,15 @@ class Ability
 
         if user.supervisor?
           can :manage, Operator, :site_id => user.site_id
+          can :update, Movement, road_order: { :contract_id => user_contracts }
           can :read, TransferOrder, :contract_id => user_contracts
         end
-
+        
+        can :update, Movement, road_order: { :contract_id => user_contracts } if user.quality?
         if user.quality? or user.station?
           can :read, Operator, :site_id => user.site_id
           can :read, TransferOrder, :contract_id => user_contracts
         end
-
       end
 
       # a user can manage their own uploads

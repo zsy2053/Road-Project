@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   resources :car_road_orders, only: [:index, :create, :show]
 
   resources :operators, only: [:index, :show, :create, :update]
+  resources :movements, only: [:show, :update]
   get 'operators/showbadge/:badge', to: 'operators#showbadge'
 
   post 'password/forgot', to: 'passwords#forgot'

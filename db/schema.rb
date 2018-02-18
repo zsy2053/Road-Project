@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180214211652) do
+ActiveRecord::Schema.define(version: 20180216212437) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -104,6 +104,8 @@ ActiveRecord::Schema.define(version: 20180214211652) do
     t.text "comments"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "production_critical"
+    t.boolean "quality_critical"
     t.index ["car_road_order_id"], name: "index_movements_on_car_road_order_id"
     t.index ["definition_id", "car_road_order_id"], name: "index_movements_on_definition_id_and_car_road_order_id", unique: true
     t.index ["definition_id"], name: "index_movements_on_definition_id"

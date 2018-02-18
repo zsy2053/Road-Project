@@ -355,6 +355,220 @@ RSpec.shared_examples "a user who can create but not modify back orders for thei
   end
 end
 
+RSpec.shared_examples "a user who can update movements for their contracts" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:other_contract) { FactoryBot.create(:contract) }
+   
+  let(:road_order) { FactoryBot.build_stubbed(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
+  let(:other_road_order) { FactoryBot.build_stubbed(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
+    
+  let!(:car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: road_order) }
+  let!(:other_car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: other_road_order) }
+  
+  let!(:definition) { FactoryBot.build_stubbed(:definition, road_order: road_order) }
+  let!(:other_definition) { FactoryBot.build_stubbed(:definition, road_order: other_road_order) }
+  
+  let!(:movement) { FactoryBot.build(:movement, car_road_order: car_road_order, definition: definition) }
+  let!(:other_movement) { FactoryBot.build(:movement, car_road_order: other_car_road_order, definition: other_definition) }
+  
+  let(:update_road_order) { FactoryBot.create(:road_order, contract: contract, station: FactoryBot.create(:station, contract: contract)) }
+  let(:other_update_road_order) { FactoryBot.create(:road_order, contract: other_contract, station: FactoryBot.create(:station, contract: other_contract)) }
+  
+  let!(:update_car_road_order) { FactoryBot.create(:car_road_order, car: FactoryBot.create(:car), road_order: update_road_order) }
+  let!(:other_update_car_road_order) { FactoryBot.create(:car_road_order, car: FactoryBot.create(:car), road_order: other_update_road_order) }
+  
+  let!(:update_definition) { FactoryBot.create(:definition, road_order: update_road_order) }
+  let!(:other_update_definition) { FactoryBot.create(:definition, road_order: other_update_road_order) }
+  
+  let!(:update_movement) { FactoryBot.create(:movement, car_road_order: update_car_road_order, definition: update_definition) }
+  let!(:other_update_movement) { FactoryBot.create(:movement, car_road_order: other_update_car_road_order, definition: other_update_definition) }
+  
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+
+  let(:ability) { Ability.new(this_user) }
+
+  it "cannot create a movement for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:create, movement)
+    expect(other_movement).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_movement)
+  end
+
+  it "cannot create a movement for an accessible contract" do
+    expect(ability).to_not be_able_to(:create, movement)
+    expect(other_movement).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_movement)
+  end
+
+  it "can update movement for an accessible contract" do
+    expect(ability).to be_able_to(:update, update_movement)
+  end
+
+   it "cannot update movement for an inaccessible contract" do
+     expect(ability).to_not be_able_to(:update, other_update_movement)
+   end
+
+  it "cannot destroy movement for an accessible contract" do
+    expect(ability).to_not be_able_to(:destroy, update_movement)
+  end
+
+  it "cannot destroy movement for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:destroy, other_update_movement)
+  end
+
+  it "can read movement for an accessible contract" do
+    expect(ability).to be_able_to(:read, update_movement)
+  end
+
+  it "cannot read movement for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:read, other_update_movement)
+  end
+
+end
+
+RSpec.shared_examples "a user who can only read movements for their contracts" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:other_contract) { FactoryBot.create(:contract) }
+   
+  let(:road_order) { FactoryBot.build_stubbed(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
+  let(:other_road_order) { FactoryBot.build_stubbed(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
+    
+  let!(:car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: road_order) }
+  let!(:other_car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: other_road_order) }
+  
+  let!(:definition) { FactoryBot.build_stubbed(:definition, road_order: road_order) }
+  let!(:other_definition) { FactoryBot.build_stubbed(:definition, road_order: other_road_order) }
+  
+  let!(:movement) { FactoryBot.build(:movement, car_road_order: car_road_order, definition: definition) }
+  let!(:other_movement) { FactoryBot.build(:movement, car_road_order: other_car_road_order, definition: other_definition) }
+  
+  
+  let(:update_road_order) { FactoryBot.create(:road_order, contract: contract, station: FactoryBot.create(:station, contract: contract)) }
+  let(:other_update_road_order) { FactoryBot.create(:road_order, contract: other_contract, station: FactoryBot.create(:station, contract: other_contract)) }
+  
+  let!(:update_car_road_order) { FactoryBot.create(:car_road_order, car: FactoryBot.create(:car), road_order: update_road_order) }
+  let!(:other_update_car_road_order) { FactoryBot.create(:car_road_order, car: FactoryBot.create(:car), road_order: other_update_road_order) }
+  
+  let!(:update_definition) { FactoryBot.create(:definition, road_order: update_road_order) }
+  let!(:other_update_definition) { FactoryBot.create(:definition, road_order: other_update_road_order) }
+  
+  let!(:update_movement) { FactoryBot.create(:movement, car_road_order: update_car_road_order, definition: update_definition) }
+  let!(:other_update_movement) { FactoryBot.create(:movement, car_road_order: other_update_car_road_order, definition: other_update_definition) }
+  
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+
+  let(:ability) { Ability.new(this_user) }
+
+  it "cannot create a movement for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:create, movement)
+    expect(other_movement).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_movement)
+  end
+
+  it "cannot create a movement for an accessible contract" do
+    expect(ability).to_not be_able_to(:create, movement)
+    expect(other_movement).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_movement)
+  end
+
+  it "cannot update movement for an accessible contract" do
+    expect(ability).to_not be_able_to(:update, update_movement)
+  end
+
+   it "cannot update movement for an inaccessible contract" do
+     expect(ability).to_not be_able_to(:update, other_update_movement)
+   end
+
+  it "cannot destroy movement for an accessible contract" do
+    expect(ability).to_not be_able_to(:destroy, update_movement)
+  end
+
+  it "cannot destroy movement for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:destroy, other_update_movement)
+  end
+
+  it "can read movement for an accessible contract" do
+    expect(ability).to be_able_to(:read, update_movement)
+  end
+
+  it "cannot read movement for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:read, other_update_movement)
+  end
+
+end
+
+RSpec.shared_examples "a user who can read all movements" do |role|
+    let!(:contract) { FactoryBot.create(:contract) }
+  let!(:other_contract) { FactoryBot.create(:contract) }
+   
+  let(:road_order) { FactoryBot.build_stubbed(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
+  let(:other_road_order) { FactoryBot.build_stubbed(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
+    
+  let!(:car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: road_order) }
+  let!(:other_car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: other_road_order) }
+  
+  let!(:definition) { FactoryBot.build_stubbed(:definition, road_order: road_order) }
+  let!(:other_definition) { FactoryBot.build_stubbed(:definition, road_order: other_road_order) }
+  
+  let!(:movement) { FactoryBot.build(:movement, car_road_order: car_road_order, definition: definition) }
+  let!(:other_movement) { FactoryBot.build(:movement, car_road_order: other_car_road_order, definition: other_definition) }
+  
+  
+  let(:update_road_order) { FactoryBot.create(:road_order, contract: contract, station: FactoryBot.create(:station, contract: contract)) }
+  let(:other_update_road_order) { FactoryBot.create(:road_order, contract: other_contract, station: FactoryBot.create(:station, contract: other_contract)) }
+  
+  let!(:update_car_road_order) { FactoryBot.create(:car_road_order, car: FactoryBot.create(:car), road_order: update_road_order) }
+  let!(:other_update_car_road_order) { FactoryBot.create(:car_road_order, car: FactoryBot.create(:car), road_order: other_update_road_order) }
+  
+  let!(:update_definition) { FactoryBot.create(:definition, road_order: update_road_order) }
+  let!(:other_update_definition) { FactoryBot.create(:definition, road_order: other_update_road_order) }
+  
+  let!(:update_movement) { FactoryBot.create(:movement, car_road_order: update_car_road_order, definition: update_definition) }
+  let!(:other_update_movement) { FactoryBot.create(:movement, car_road_order: other_update_car_road_order, definition: other_update_definition) }
+  
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+
+  let(:ability) { Ability.new(this_user) }
+
+  it "cannot create a movement for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:create, movement)
+    expect(other_movement).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_movement)
+  end
+
+  it "cannot create a movement for an accessible contract" do
+    expect(ability).to_not be_able_to(:create, movement)
+    expect(other_movement).to_not be_persisted
+    expect(ability).to_not be_able_to(:create, other_movement)
+  end
+
+  it "cannot update movement for an accessible contract" do
+    expect(ability).to_not be_able_to(:update, update_movement)
+  end
+
+   it "cannot update movement for an inaccessible contract" do
+     expect(ability).to_not be_able_to(:update, other_update_movement)
+   end
+
+  it "cannot destroy movement for an accessible contract" do
+    expect(ability).to_not be_able_to(:destroy, update_movement)
+  end
+
+  it "cannot destroy movement for an inaccessible contract" do
+    expect(ability).to_not be_able_to(:destroy, other_update_movement)
+  end
+
+  it "can read movement for an accessible contract" do
+    expect(ability).to be_able_to(:read, update_movement)
+  end
+
+  it "can read movement for an inaccessible contract" do
+    expect(ability).to be_able_to(:read, other_update_movement)
+  end
+end
+
 describe "Ability" do
 
   let!(:sites) {[ FactoryBot.create(:site), FactoryBot.create(:site) ]}
@@ -418,7 +632,10 @@ describe "Ability" do
     it_should_behave_like "a user who can create but not modify car road orders for their contracts", "supervisor"
 
     it_should_behave_like "a user who can only read their back orders", "supervisor"
-    it_should_behave_like "a user who cannot modify back orders", "supervisor"
+    it_should_behave_like "a user who cannot modify back orders", "supervisor"  
+    
+    it_should_behave_like "a user who can update movements for their contracts" , "supervisor" 
+          
   end
 
   describe "planner" do
@@ -468,6 +685,8 @@ describe "Ability" do
 
     it_should_behave_like "a user who can only read their back orders", "planner"
     it_should_behave_like "a user who can create but not modify back orders for their contracts", "planner"
+    
+    it_should_behave_like "a user who can only read movements for their contracts", "planner"
   end
 
   describe "method_engineer" do
@@ -517,6 +736,8 @@ describe "Ability" do
 
     it_should_behave_like "a user who can only read their back orders", "method_engineer"
     it_should_behave_like "a user who cannot modify back orders", "method_engineer"
+    
+    it_should_behave_like "a user who can only read movements for their contracts", "method_engineer"
   end
 
   describe "quality" do
@@ -566,6 +787,8 @@ describe "Ability" do
 
     it_should_behave_like "a user who can only read their back orders", "quality"
     it_should_behave_like "a user who cannot modify back orders", "quality"
+    
+    it_should_behave_like "a user who can update movements for their contracts" , "quality" 
   end
 
   describe "station" do
@@ -615,6 +838,8 @@ describe "Ability" do
 
     it_should_behave_like "a user who can only read their back orders", "station"
     it_should_behave_like "a user who cannot modify back orders", "station"
+    
+    it_should_behave_like "a user who can only read movements for their contracts", "station"
   end
 
   describe "admin" do
@@ -712,6 +937,8 @@ describe "Ability" do
 
     it_should_behave_like "a user who can only read their back orders", "admin"
     it_should_behave_like "a user who cannot modify back orders", "admin"
+    
+    it_should_behave_like "a user who can only read movements for their contracts", "admin"
   end
 
   describe "super_admin" do
@@ -749,6 +976,8 @@ describe "Ability" do
 
     it_should_behave_like "a user who can read all back orders", "super_admin"
     it_should_behave_like "a user who cannot modify back orders", "super_admin"
+    
+    it_should_behave_like "a user who can read all movements", "super_admin"
   end
 
   def can_read_the_site_they_belong_to(user)
