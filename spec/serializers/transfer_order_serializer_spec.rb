@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe TransferOrderSerializer, type: :serializer do
-  let!(:contract1) { FactoryBot.create(:contract, :name => "contract 1") }
   let!(:station1) { FactoryBot.create(:station, :name => "station 1") }
-  let!(:transfer_order1) { FactoryBot.create(:transfer_order, :contract_id => contract1.id, :station_id => station1.id)}
+  let(:contract1) { station1.contract }
+  let!(:assembly) { FactoryBot.create(:car, :contract => contract1) }
+  let!(:transfer_order1) { FactoryBot.create(:transfer_order, :contract_id => contract1.id, :station_id => station1.id, :assembly => assembly) }
   let(:serializer) { described_class.new(transfer_order1) }
   let(:serialization) { ActiveModelSerializers::Adapter.create(serializer) }
 
@@ -27,7 +28,8 @@ RSpec.describe TransferOrderSerializer, type: :serializer do
       'priority',
       'reason_code',
       'station',
-      'contract'
+      'contract',
+      'assembly'
     )
   end
 
@@ -97,5 +99,9 @@ RSpec.describe TransferOrderSerializer, type: :serializer do
 
     it "should have a contract that matches" do
       expect(subject['contract']['id']).to eq(transfer_order1.contract.id)
+    end
+
+    it "should have an assembly that matches" do
+      expect(subject['assembly']['id']).to eq(transfer_order1.assembly.id)
     end
 end

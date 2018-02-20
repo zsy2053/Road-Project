@@ -22,6 +22,17 @@ RSpec.describe TransferOrder, type: :model do
   it { should validate_presence_of(:priority) }
 
   it { should validate_presence_of(:reason_code) }
+  
+  describe :assembly do
+    it "can be set" do
+      assembly = FactoryBot.create(:car)
+      expect(FactoryBot.build(:transfer_order, assembly: assembly)).to be_valid
+    end
+    
+    it "can be null" do
+      expect { FactoryBot.create(:transfer_order, assembly: nil) }.not_to raise_error
+    end
+  end
 
   it "automatically assigns a contract if station present" do
     station = FactoryBot.create(:station)

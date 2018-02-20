@@ -3,9 +3,10 @@ require 'rails_helper'
 RSpec.describe TransferOrdersController, type: :controller do
   describe "GET #index" do
     let!(:contract1) { FactoryBot.create(:contract, :name => "contract 1") }
-    let!(:contract2) { FactoryBot.create(:contract, :name => "contract 2") }
-    let!(:transfer_order1) { FactoryBot.create(:transfer_order, :contract_id => contract1.id)}
-    let!(:transfer_order2) { FactoryBot.create(:transfer_order, :contract_id => contract2.id)}
+    let!(:contract2) { FactoryBot.create(:contract, :name => "contract 2", :site => contract1.site) }
+    let!(:transfer_order1) { FactoryBot.create(:transfer_order, :contract_id => contract1.id) }
+    let!(:transfer_order2) { FactoryBot.create(:transfer_order, :contract_id => contract2.id) }
+    
     subject { get :index, {} }
 
     context "for anonymous user" do
@@ -32,6 +33,48 @@ RSpec.describe TransferOrdersController, type: :controller do
         result = assigns(:transfer_orders)
         expect(result.count).to eq(2)
         expect(result).to include(transfer_order1)
+        expect(result).to include(transfer_order2)
+      end
+    end
+  end
+  
+  describe "GET #index with optional filters" do
+    let!(:station1) { FactoryBot.create(:station) }
+    let!(:contract) { station1.contract }
+    let!(:station2) { FactoryBot.create(:station, contract: contract) }
+    
+    let!(:car1) { FactoryBot.create(:car, contract: contract) }
+    let!(:car2) { FactoryBot.create(:car, contract: contract) }
+    
+    let!(:transfer_order1) { FactoryBot.create(:transfer_order, :contract => contract, :station => station1, :assembly => car1) }
+    let!(:transfer_order2) { FactoryBot.create(:transfer_order, :contract => contract, :station => station2, :assembly => car2) }
+    
+    subject { get :index, params: { :assembly_id => car2.id, :station_id => station2.id } }
+    
+    context "for anonymous user" do
+      it "returns a failed response without login" do
+        subject
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context "for authorized user with access" do
+      before(:each) do
+        @api_trackware_user = FactoryBot.create(:api_trackware_user)
+        add_jwt_header(request, @api_trackware_user)
+      end
+
+      it "returns a success response if login." do
+        subject
+        expect(response).to have_http_status(:success)
+      end
+
+      it "returns correct number of transfer order." do
+        # There should be 2 transfer orders inside the database, and the user can access them.
+        subject
+        result = assigns(:transfer_orders)
+        expect(result.count).to eq(1)
+        expect(result).to_not include(transfer_order1)
         expect(result).to include(transfer_order2)
       end
     end

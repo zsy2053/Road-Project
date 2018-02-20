@@ -6,7 +6,14 @@ class TransferOrdersController < ApplicationController
   # GET /transfer_orders
   def index
     authorize! :read, TransferOrder
-    @transfer_orders = TransferOrder.accessible_by(current_ability)
+    @transfer_orders = TransferOrder.includes(:station, :contract, :assembly).accessible_by(current_ability)
+    # filter by optional parameters if supplied
+    if params[:assembly_id]
+      @transfer_orders = @transfer_orders.where(assembly_id: params[:assembly_id])
+    end
+    if params[:station_id]
+      @transfer_orders = @transfer_orders.where(station_id: params[:station_id])
+    end
     render json: @transfer_orders
   end
 
