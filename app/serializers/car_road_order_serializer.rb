@@ -16,7 +16,7 @@ class CarRoadOrderSerializer < ActiveModel::Serializer
   class MovementSerializer < ActiveModel::Serializer
     attributes :id, :work_location, :actual_duration, :comments, :percent_complete,
       :day, :shift, :name, :description, :expected_duration, :breaks, :expected_start,
-      :expected_end, :serialized, :positions
+      :expected_end, :serialized, :positions, :production_critical, :quality_critical
     
     def work_location
       object.definition.work_location
