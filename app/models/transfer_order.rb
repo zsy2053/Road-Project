@@ -3,6 +3,7 @@ class TransferOrder < ApplicationRecord
 
   belongs_to :contract
   belongs_to :station
+  belongs_to :assembly, class_name: 'Car', optional: true
 
   validates_presence_of :car, :order, :to_number, :installation, :sort_string, :priority, :reason_code
 
