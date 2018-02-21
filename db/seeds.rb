@@ -80,17 +80,17 @@ station6_ro1     = FactoryBot.create(:road_order, :station_id => station6.id, :c
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "1", work_location: "WL2", name: "TASK-{i}-112", description: "DESC-{i}-112", expected_duration: 60, breaks: 0,  expected_start: "07:00:00", expected_end: "08:00:00", serialized: false, positions: [ "B1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "1", work_location: "WL3", name: "TASK-{i}-113", description: "DESC-{i}-113", expected_duration: 60, breaks: 0,  expected_start: "07:00:00", expected_end: "08:00:00", serialized: false, positions: [ "C1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "1", work_location: "WL4", name: "TASK-{i}-114", description: "DESC-{i}-114", expected_duration: 75, breaks: 15, expected_start: "08:00:00", expected_end: "09:30:00", serialized: false, positions: [ "A1", "B1", "C1" ])
-  
+
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL1", name: "TASK-{i}-121", description: "DESC-{i}-121", expected_duration: 45, breaks: 0,  expected_start: "13:00:00", expected_end: "13:45:00", serialized: false, positions: [ "A1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL2", name: "TASK-{i}-122", description: "DESC-{i}-122", expected_duration: 45, breaks: 0,  expected_start: "13:00:00", expected_end: "13:45:00", serialized: false, positions: [ "B1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL3", name: "TASK-{i}-123", description: "DESC-{i}-123", expected_duration: 45, breaks: 0,  expected_start: "13:00:00", expected_end: "13:45:00", serialized: false, positions: [ "C1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL4", name: "TASK-{i}-124", description: "DESC-{i}-124", expected_duration: 80, breaks: 15, expected_start: "13:45:00", expected_end: "15:20:00", serialized: false, positions: [ "A1", "B1", "C1" ])
-  
+
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL1", name: "TASK-{i}-211", description: "DESC-{i}-211", expected_duration: 75, breaks: 0,  expected_start: "07:00:00", expected_end: "08:15:00", serialized: false, positions: [ "A1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL2", name: "TASK-{i}-212", description: "DESC-{i}-212", expected_duration: 75, breaks: 0,  expected_start: "07:00:00", expected_end: "08:15:00", serialized: false, positions: [ "B1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL3", name: "TASK-{i}-213", description: "DESC-{i}-213", expected_duration: 75, breaks: 0,  expected_start: "07:00:00", expected_end: "08:15:00", serialized: false, positions: [ "C1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL4", name: "TASK-{i}-214", description: "DESC-{i}-214", expected_duration: 90, breaks: 15, expected_start: "08:15:00", expected_end: "10:00:00", serialized: false, positions: [ "A1", "B1", "C1" ])
-  
+
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "2", work_location: "WL1", name: "TASK-{i}-221", description: "DESC-{i}-221", expected_duration: 30, breaks: 0,  expected_start: "07:00:00", expected_end: "07:30:00", serialized: false, positions: [ "A1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "2", work_location: "WL2", name: "TASK-{i}-222", description: "DESC-{i}-222", expected_duration: 30, breaks: 0,  expected_start: "07:00:00", expected_end: "07:30:00", serialized: false, positions: [ "B1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "2", work_location: "WL3", name: "TASK-{i}-223", description: "DESC-{i}-223", expected_duration: 30, breaks: 0,  expected_start: "07:00:00", expected_end: "07:30:00", serialized: false, positions: [ "C1" ])
@@ -104,19 +104,19 @@ end
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "1", work_location: "WL3", name: "TASK-{i}-113", description: "DESC-{i}-113", expected_duration: 60, breaks: 0,  expected_start: "07:00:00", expected_end: "08:00:00", serialized: false, positions: [ "C1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "1", work_location: "WL4", name: "TASK-{i}-114", description: "DESC-{i}-114", expected_duration: 60, breaks: 0,  expected_start: "07:00:00", expected_end: "08:00:00", serialized: false, positions: [ "D1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "1", work_location: "WL5", name: "TASK-{i}-115", description: "DESC-{i}-115", expected_duration: 75, breaks: 15, expected_start: "08:00:00", expected_end: "09:30:00", serialized: false, positions: [ "A1", "B1", "C1", "D1" ])
-  
+
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL1", name: "TASK-{i}-121", description: "DESC-{i}-121", expected_duration: 45, breaks: 0,  expected_start: "13:00:00", expected_end: "13:45:00", serialized: false, positions: [ "A1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL2", name: "TASK-{i}-122", description: "DESC-{i}-122", expected_duration: 45, breaks: 0,  expected_start: "13:00:00", expected_end: "13:45:00", serialized: false, positions: [ "B1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL3", name: "TASK-{i}-123", description: "DESC-{i}-123", expected_duration: 45, breaks: 0,  expected_start: "13:00:00", expected_end: "13:45:00", serialized: false, positions: [ "C1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL4", name: "TASK-{i}-124", description: "DESC-{i}-124", expected_duration: 45, breaks: 0,  expected_start: "13:00:00", expected_end: "13:45:00", serialized: false, positions: [ "D1" ])
   FactoryBot.create(:definition, road_order: ro, day: "1", shift: "2", work_location: "WL5", name: "TASK-{i}-125", description: "DESC-{i}-125", expected_duration: 80, breaks: 15, expected_start: "13:45:00", expected_end: "15:20:00", serialized: false, positions: [ "A1", "B1", "C1", "D1" ])
-  
+
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL1", name: "TASK-{i}-211", description: "DESC-{i}-211", expected_duration: 75, breaks: 0,  expected_start: "07:00:00", expected_end: "08:15:00", serialized: false, positions: [ "A1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL2", name: "TASK-{i}-212", description: "DESC-{i}-212", expected_duration: 75, breaks: 0,  expected_start: "07:00:00", expected_end: "08:15:00", serialized: false, positions: [ "B1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL3", name: "TASK-{i}-213", description: "DESC-{i}-213", expected_duration: 75, breaks: 0,  expected_start: "07:00:00", expected_end: "08:15:00", serialized: false, positions: [ "C1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL4", name: "TASK-{i}-214", description: "DESC-{i}-214", expected_duration: 75, breaks: 0,  expected_start: "07:00:00", expected_end: "08:15:00", serialized: false, positions: [ "D1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "1", work_location: "WL5", name: "TASK-{i}-215", description: "DESC-{i}-215", expected_duration: 90, breaks: 15, expected_start: "08:15:00", expected_end: "10:00:00", serialized: false, positions: [ "A1", "B1", "C1", "D1" ])
-  
+
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "2", work_location: "WL1", name: "TASK-{i}-221", description: "DESC-{i}-221", expected_duration: 30, breaks: 0,  expected_start: "07:00:00", expected_end: "07:30:00", serialized: false, positions: [ "A1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "2", work_location: "WL2", name: "TASK-{i}-222", description: "DESC-{i}-222", expected_duration: 30, breaks: 0,  expected_start: "07:00:00", expected_end: "07:30:00", serialized: false, positions: [ "B1" ])
   FactoryBot.create(:definition, road_order: ro, day: "2", shift: "2", work_location: "WL3", name: "TASK-{i}-223", description: "DESC-{i}-223", expected_duration: 30, breaks: 0,  expected_start: "07:00:00", expected_end: "07:30:00", serialized: false, positions: [ "C1" ])
