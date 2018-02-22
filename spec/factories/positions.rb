@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :position do
     car_road_order
-    name "name"
+    sequence(:name) { |n| "position#{n}" }
   end
 end

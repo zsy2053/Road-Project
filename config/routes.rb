@@ -20,6 +20,8 @@ Rails.application.routes.draw do
 
   resources :operators, only: [:index, :show, :create, :update]
   resources :movements, only: [:show, :update]
+  resources :positions, only: [:show, :update]
+
   get 'operators/showbadge/:badge', to: 'operators#showbadge'
 
   post 'password/forgot', to: 'passwords#forgot'
