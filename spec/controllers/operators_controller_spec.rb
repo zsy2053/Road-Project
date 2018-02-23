@@ -83,6 +83,53 @@ RSpec.describe OperatorsController, type: :controller do
     end
   end
 
+  describe "PATCH #update" do
+    let!(:operator1) { FactoryBot.create(:operator, :site => site) }
+    let!(:operator2) { FactoryBot.create(:operator, :site => site) }
+    let!(:attributes) {
+      {
+        id: operator1.id,
+        first_name: "test1",
+        last_name: "test2",
+        employee_number: "tesnt12345",
+        badge: "test215235",
+        suspended: true,
+        site_id: site.id
+      }
+    }
+    context "for anonymous user" do
+      it "returns unauthorized" do
+        patch :update, params: { :id => operator1, :operator => attributes }
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+
+    context "for authenticated user with access" do
+      before(:each) do
+        @supervisor = FactoryBot.create(:supervisor_user, :site => site)
+        add_jwt_header(request, @supervisor)
+      end
+
+      it("update the operator with attributes") do
+        patch :update, params: { :id => operator1.id, :operator => attributes }
+        expect(response).to have_http_status(:success)
+      end
+    end
+
+    context "for authenticated user without access" do
+      before(:each) do
+        @method_engineer_user = FactoryBot.create(:method_engineer_user, :site => site)
+        add_jwt_header(request, @method_engineer_user)
+      end
+
+      it "is forbidden" do
+        patch :update, params: { :id => operator1.id, :operator => attributes }
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+  end
+
+
   describe "POST #create" do
     let!(:valid_attributes) {
       {
@@ -114,17 +161,17 @@ RSpec.describe OperatorsController, type: :controller do
           @super_admin = FactoryBot.create(:super_admin_user, :site => site)
           add_jwt_header(request, @super_admin)
         end
-        
+
         it "succeeds" do
           post :create, params: { operator: valid_attributes }
           expect(response).to have_http_status(:created)
           expect(response.content_type).to eq('application/json')
           expect(response).to have_http_status(:success)
         end
-        
+
         it "creates a new record" do
           expect{ post :create, params: { operator: valid_attributes } }.to change{ Operator.count }.by(1)
-          
+
           result = Operator.last
           expect(response.location).to eq(operator_url(result))
           expect(result.first_name).to eq('test1')
@@ -140,18 +187,18 @@ RSpec.describe OperatorsController, type: :controller do
           expect(response.content_type).to eq('application/json')
         end
       end
-      
+
       describe "without access" do
         before(:each) do
           @station_user = FactoryBot.create(:station_user, :site => site)
           add_jwt_header(request, @station_user)
         end
-      
+
         it "is forbidden" do
           post :create, params: { operator: valid_attributes }
           expect(response).to have_http_status(:forbidden)
         end
-        
+
         it "does not create a new record" do
           expect{ post :create, params: { operator: valid_attributes } }.to change{ Operator.count }.by(0)
         end
@@ -185,13 +232,13 @@ RSpec.describe OperatorsController, type: :controller do
         expect(response.content_type).to eq('application/json')
       end
     end
-    
+
     context "for authenticated user but have no access" do
       before(:each) do
         @method_engineer = FactoryBot.create(:method_engineer_user, :site => site)
         add_jwt_header(request, @method_engineer)
       end
-      
+
       it "is forbidden" do
         get :showbadge, params: { :badge => operator1.badge }
         expect(response).to have_http_status(:forbidden)

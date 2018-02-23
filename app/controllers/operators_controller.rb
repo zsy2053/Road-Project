@@ -30,9 +30,10 @@ class OperatorsController < ApplicationController
 
   # PATCH/PUT /operators/1
   def update
-    authorize! :update, @operator
-    if @operator.update(operator_params)
-      render json: @operator, except: :badge
+    @update_operator = Operator.find(params[:id])
+    authorize! :update, @update_operator
+    if @update_operator.update_attributes(operator_params)
+      render json: @update_operator, except: :badge
     else
       render json: @operator.errors, status: :unprocessable_entity
     end
