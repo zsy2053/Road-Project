@@ -35,7 +35,7 @@ class OperatorsController < ApplicationController
     if @update_operator.update_attributes(operator_params)
       render json: @update_operator, except: :badge
     else
-      render json: @operator.errors, status: :unprocessable_entity
+      render json: @update_operator.errors, status: :unprocessable_entity
     end
   end
 
