@@ -9,7 +9,7 @@ RSpec.describe OperatorSerializer, type: :serializer do
 
   it "only contains the expected keys" do
     expect(subject.keys).to contain_exactly(
-      'id', 'first_name', 'last_name', 'employee_number', 'suspended'
+      'id', 'first_name', 'last_name', 'employee_number', 'suspended', 'position_id'
     )
   end
 
@@ -31,5 +31,9 @@ RSpec.describe OperatorSerializer, type: :serializer do
 
   it "should have an suspended that matches" do
     expect(subject['suspended']).to eq(operator1.suspended)
+  end
+
+  it "should have a position_id that matches" do
+    expect(subject['position_id']).to eq(operator1.position_id)
   end
 end
