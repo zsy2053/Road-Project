@@ -21,6 +21,7 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
   context "road order with an attachment" do
     # this is done to save calls against S3
     let!(:road_order) { FactoryBot.create(:road_order,
+      version: '1.0.0',
       car_type: "COACH",
       start_car: 1,
       work_centre: "Work Centre",
@@ -90,10 +91,15 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
         'definitions',
         'station',
         'contract',
-        'author'
+        'author',
+        'version'
       )
     end
     
+    it "has expected version" do
+      expect(subject['version']).to eq('1.0.0')
+    end
+
     it "has expected id" do
       expect(subject['id']).to eq(id)
     end
@@ -149,6 +155,7 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
   
   context "road order with two definitions" do
     let!(:road_order) { FactoryBot.create(:road_order,
+      version: '1.0.0',
       car_type: "COACH",
       start_car: 1,
       work_centre: "Work Centre",
@@ -210,10 +217,15 @@ RSpec.describe RoadOrderDetailsSerializer, type: :serializer do
         'definitions',
         'station',
         'contract',
-        'author'
+        'author',
+        'version'
       )
     end
     
+    it "has expected version" do
+      expect(subject['version']).to eq('1.0.0')
+    end
+
     it "has expected id" do
       expect(subject['id']).to eq(id)
     end

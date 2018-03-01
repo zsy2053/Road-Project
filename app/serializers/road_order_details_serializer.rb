@@ -1,5 +1,5 @@
 class RoadOrderDetailsSerializer < ActiveModel::Serializer
-  attributes :id, :car_type, :start_car, :work_centre, :module, :day_shifts, :positions, :import_url
+  attributes :id, :car_type, :start_car, :work_centre, :module, :day_shifts, :positions, :import_url, :version
   
   has_many :definitions
   belongs_to :station
