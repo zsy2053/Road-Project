@@ -68,6 +68,7 @@ class UsersController < ApplicationController
       :phone, 
       :suspended, 
       :ignore_password,
+      :site_name_text,
       contract_ids: [])
     end
 end

@@ -7,7 +7,7 @@ FactoryBot.define do
     sequence(:employee_id) { |n| 10000 + n }
     password "Qwer1234"
     site
-
+    site_name_text "Oshawa"
     # use the roles collection to generate role specific factories
     User.roles.each do |key, value|
       factory :"#{value}_user" do

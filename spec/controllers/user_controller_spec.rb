@@ -109,7 +109,7 @@ RSpec.describe UsersController, type: :controller do
     let(:site) { FactoryBot.create(:site) }
     
     let(:valid_attributes) {
-      { username: "admin1", password: "Qwer1234", email: "test123@gmail.com", site_id: site.id, role: "super_admin", first_name: "testname", last_name: "testlast", employee_id: "654322", phone: "640154568" }
+      { username: "admin1", password: "Qwer1234", email: "test123@gmail.com", site_id: site.id, role: "super_admin", first_name: "testname", last_name: "testlast", employee_id: "654322", phone: "640154568", site_name_text: "Oshawa" }
     }
     
     let(:invalid_attributes) {
@@ -151,7 +151,8 @@ RSpec.describe UsersController, type: :controller do
             last_name: "testlast", 
             employee_id: "654322", 
             phone: "640154568",
-            contract_ids: [ contract.id ]
+            contract_ids: [ contract.id ],
+            site_name_text: 'Oshawa'
           }
         }
         
