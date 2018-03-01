@@ -20,7 +20,8 @@ RSpec.describe UserSerializer, type: :serializer do
       'site_id',
       'site_name',
       'contracts',
-      'suspended'
+      'suspended',
+      'site_name_text'
     )
   end
   
@@ -68,5 +69,9 @@ RSpec.describe UserSerializer, type: :serializer do
     # updated_at and create_at has a different format when active record is converted to json by as_json, so I excluded them in comparison 
     expect([expected_contracts[0]['access_id'],expected_contracts[0]['site_id'], expected_contracts[0]['status'], expected_contracts[0]['name'], expected_contracts[0]['code']]).to eq([accesses[0].id,contracts[0]['site_id'], contracts[0]['status'], contracts[0]['name'], contracts[0]['code']])
     expect([expected_contracts[1]['access_id'],expected_contracts[1]['site_id'], expected_contracts[1]['status'], expected_contracts[1]['name'], expected_contracts[1]['code']]).to eq([accesses[1].id,contracts[1]['site_id'], contracts[1]['status'], contracts[1]['name'], contracts[1]['code']])
+  end
+  
+  it 'should have a site_name_text that matches' do
+    expect(subject['site_name_text']).to eq(user.site_name_text)
   end
 end

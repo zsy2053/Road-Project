@@ -13,6 +13,8 @@ RSpec.describe User, type: :model do
 
   it { should validate_presence_of :email }
   
+  it { should validate_presence_of :site_name_text }
+  
   describe :username do
     it "cannot be nil" do
       expect(FactoryBot.build(:user, username: nil)).to_not be_valid
