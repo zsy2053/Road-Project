@@ -70,7 +70,8 @@ class RoadOrdersController < ApplicationController
         :expected_end,
         :serialized,
         { :positions => [] }
-      ] }
+      ] },
+      :version
     )
   end
 end

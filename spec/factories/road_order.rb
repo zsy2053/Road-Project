@@ -8,6 +8,7 @@ FactoryBot.define do
     sequence(:module) { "B" } # using sequence as a workaround because 'module' is a reserved word in rails
     positions []
     day_shifts {}
+    version '1.0.0'
 
     after(:build) do |road_order|
       road_order.contract ||= road_order.station.contract

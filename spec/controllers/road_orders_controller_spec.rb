@@ -88,6 +88,7 @@ RSpec.describe RoadOrdersController, type: :controller do
     
     let(:valid_attributes) {
       {
+        version: '1.0.0',
         car_type: 'Coach',
         start_car: 1,
         station_id: station.id,
@@ -154,6 +155,7 @@ RSpec.describe RoadOrdersController, type: :controller do
           expect(response.location).to eq(road_order_url(result))
           
           # check road order attributes
+          expect(result.version).to eq('1.0.0')
           expect(result.car_type).to eq('Coach')
           expect(result.start_car).to eq(1)
           expect(result.station.id).to eq(station.id)

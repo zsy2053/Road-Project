@@ -207,4 +207,6 @@ RSpec.describe RoadOrder, type: :model do
       expect(x.day_shifts).to eq(hsh)
     end
   end
+  
+  it { should validate_presence_of :version }
 end

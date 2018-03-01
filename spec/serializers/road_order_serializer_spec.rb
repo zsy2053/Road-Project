@@ -22,6 +22,7 @@ RSpec.describe RoadOrderSerializer, type: :serializer do
     let!(:contract) { FactoryBot.create(:contract, name: "Contract Name") }
     let!(:station) { FactoryBot.create(:station, contract: contract, name: "Station Name") }
     let!(:road_order) { FactoryBot.create(:road_order,
+      version: '1.0.0',
       contract: contract,
       station: station,
       car_type: "COACH",
@@ -84,10 +85,15 @@ RSpec.describe RoadOrderSerializer, type: :serializer do
         'contract',
         'contract_name',
         'day_shifts',
-        'max_car'
+        'max_car',
+        'version'
       )
     end
-    
+
+    it "has expect version" do
+      expect(subject['version']).to eq('1.0.0')
+    end
+
     it "has expected id" do
       expect(subject['id']).to eq(id)
     end

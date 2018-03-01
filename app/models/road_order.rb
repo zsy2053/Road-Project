@@ -11,6 +11,8 @@ class RoadOrder < ApplicationRecord
   has_many :car_road_orders, dependent: :destroy
   has_many :cars, through: :car_road_orders
   
+  validates :version, presence: true
+
   validate :minimum_start_car
   def minimum_start_car
     # can only validate if a start_car, car_type, station, and contract are present
