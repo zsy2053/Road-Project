@@ -7,6 +7,15 @@ class OperatorsController < ApplicationController
   def index
     authorize! :read, Operator
     @operators = Operator.accessible_by(current_ability)
+    
+    # if a timestamp is provided
+    if params[:time]
+      # convert string parameter to a date -- bad input will be interpreted as timestamp = 0 which will result in all returned
+      tmp = Time.at(params[:time].to_f / 1000.0)
+      date_range = tmp..DateTime.now
+      @operators = @operators.where(updated_at: date_range)
+    end
+    
     render json: @operators, except: :badge
   end
 

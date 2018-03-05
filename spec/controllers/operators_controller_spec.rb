@@ -33,6 +33,37 @@ RSpec.describe OperatorsController, type: :controller do
         expect(result).to include(operator1)
         expect(result).to include(operator2)
       end
+      
+      context "filtering by time" do
+        let!(:operator3) { FactoryBot.create(:operator, :site => site, :badge => "operator3", :created_at => 1.hour.ago, :updated_at => 1.hour.ago) }
+        let!(:operator4) { FactoryBot.create(:operator, :site => site, :badge => "operator4", :created_at => 1.hour.ago, :updated_at => 1.hour.ago) }
+        
+        it "with a valid time works" do
+          # record current time
+          now_as_timestamp = DateTime.now().to_f * 1000
+          
+          get :index, params: { :time => now_as_timestamp }
+          result = assigns(:operators)
+          expect(result.count).to eq(2)
+          expect(result).not_to include(operator4)
+          expect(result).not_to include(operator3)
+          expect(result).to include(operator2)
+          expect(result).to include(operator1)
+        end
+        
+        it "with an invalid time returns all" do
+          # record current time
+          not_a_timestamp = "apple"
+          
+          get :index, params: { :time => not_a_timestamp }
+          result = assigns(:operators)
+          expect(result.count).to eq(4)
+          expect(result).to include(operator4)
+          expect(result).to include(operator3)
+          expect(result).to include(operator2)
+          expect(result).to include(operator1)
+        end
+      end
     end
 
     context "for authenticate user without access" do
