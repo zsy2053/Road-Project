@@ -49,6 +49,29 @@ station4_access  = FactoryBot.create(:access, :user_id => station4_user.id, :con
 station5_access  = FactoryBot.create(:access, :user_id => station5_user.id, :contract_id => contract3.id)
 station6_access  = FactoryBot.create(:access, :user_id => station6_user.id, :contract_id => contract3.id)
 
+stop_reason1 = FactoryBot.create(:stop_reason, :label => "Out of station work", :should_alert => false)
+stop_reason2 = FactoryBot.create(:stop_reason, :label => "MRF", :should_alert => false)
+stop_reason3 = FactoryBot.create(:stop_reason, :label => "Part Changed", :should_alert => false)
+stop_reason4 = FactoryBot.create(:stop_reason, :label => "Damage Part", :should_alert => false)
+stop_reason5 = FactoryBot.create(:stop_reason, :label => "MRB", :should_alert => true)
+stop_reason6 = FactoryBot.create(:stop_reason, :label => "Structural Issue", :should_alert => true)
+stop_reason7 = FactoryBot.create(:stop_reason, :label => "BO Part", :should_alert => true)
+stop_reason8 = FactoryBot.create(:stop_reason, :label => "Crib", :should_alert => false)
+stop_reason9 = FactoryBot.create(:stop_reason, :label => "Washroom", :should_alert => false)
+stop_reason10 = FactoryBot.create(:stop_reason, :label => "Part Prep", :should_alert => false)
+stop_reason11 = FactoryBot.create(:stop_reason, :label => "Snag work before installation", :should_alert => false)
+stop_reason12 = FactoryBot.create(:stop_reason, :label => "QA Inspection", :should_alert => true)
+stop_reason13 = FactoryBot.create(:stop_reason, :label => "Safety", :should_alert => true)
+stop_reason14 = FactoryBot.create(:stop_reason, :label => "Finisher Damage", :should_alert => true)
+stop_reason15 = FactoryBot.create(:stop_reason, :label => "QN waiting for disposition", :should_alert => false)
+stop_reason16 = FactoryBot.create(:stop_reason, :label => "Parts not found", :should_alert => false)
+stop_reason17 = FactoryBot.create(:stop_reason, :label => "Parts not installed", :should_alert => false)
+stop_reason18 = FactoryBot.create(:stop_reason, :label => "Training", :should_alert => false)
+stop_reason19 = FactoryBot.create(:stop_reason, :label => "Evacuation", :should_alert => true)
+stop_reason20 = FactoryBot.create(:stop_reason, :label => "Car Moves", :should_alert => false)
+stop_reason21 = FactoryBot.create(:stop_reason, :label => "Road Order unaligned", :should_alert => false)
+stop_reason22 = FactoryBot.create(:stop_reason, :label => "Wrong installation sequence", :should_alert => false)
+
 day_shifts = {
   '1' => [
     { :shift => '1', :start => '07:00:00', :end => '13:00:00' },

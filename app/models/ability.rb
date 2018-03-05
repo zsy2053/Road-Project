@@ -18,7 +18,7 @@ class Ability
       else
         can :read, Site, :id => user.site_id
         user_contracts = user.contracts.pluck(:id)
-
+        can :read, StopReason
         # non super admins can only read contracts, stations, road orders, and back orders they have access to
         can :read, Contract, :id => user_contracts
         can :read, Station, :contract_id => user_contracts
