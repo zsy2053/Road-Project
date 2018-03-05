@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180228204110) do
+ActiveRecord::Schema.define(version: 20180301201356) do
 
   create_table "accesses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "user_id"
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(version: 20180228204110) do
     t.datetime "updated_at", null: false
     t.bigint "site_id"
     t.bigint "position_id"
+    t.integer "movement_id"
     t.index ["badge"], name: "index_operators_on_badge", unique: true
     t.index ["employee_number"], name: "index_operators_on_employee_number", unique: true
     t.index ["position_id"], name: "index_operators_on_position_id"

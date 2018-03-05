@@ -41,12 +41,13 @@ RSpec.describe CarRoadOrderSerializer, type: :serializer do
       'first_name',
       'last_name',
       'employee_number',
-      'badge',
+      'badge', # TODO this should not be here
       'suspended',
       'created_at',
       'updated_at',
       'id',
       'position_id',
+      'movement_id',
       'site_id'
       )
       expect(subject2['positions'][0]['operators'][0]['first_name']).to eq(operator2.first_name)
