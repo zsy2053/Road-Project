@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   post 'transfer_orders/', to: 'transfer_orders#create_or_update'
 
   resources :car_road_orders, only: [:index, :create, :show]
-
+  resources :stop_reasons, only: [:index, :show]
   resources :operators, only: [:index, :show, :create, :update]
   resources :movements, only: [:show, :update]
   resources :positions, only: [:show, :update]
