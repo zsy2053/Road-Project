@@ -4,6 +4,7 @@ class Movement < ApplicationRecord
   belongs_to :definition
   has_one :road_order, through: :definition
   has_many :operators
+  has_many :works, as: :parent
   belongs_to :car_road_order
 
   validates :actual_duration, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }

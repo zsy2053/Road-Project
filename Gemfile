@@ -27,6 +27,7 @@ gem 'devise-jwt', '~> 0.4.3'
 gem 'jwt'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'cancancan', '~> 2.0'
+gem 'validates_timeliness', '~> 4.0'
 
 gem 'active_model_serializers'
 

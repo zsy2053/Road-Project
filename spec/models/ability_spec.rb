@@ -358,10 +358,10 @@ end
 RSpec.shared_examples "a user who can update movements for their contracts" do |role|
   let!(:contract) { FactoryBot.create(:contract) }
   let!(:other_contract) { FactoryBot.create(:contract) }
-   
+  
   let(:road_order) { FactoryBot.build_stubbed(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
   let(:other_road_order) { FactoryBot.build_stubbed(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
-    
+  
   let!(:car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: road_order) }
   let!(:other_car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: other_road_order) }
   
@@ -429,10 +429,10 @@ end
 RSpec.shared_examples "a user who can only read movements for their contracts" do |role|
   let!(:contract) { FactoryBot.create(:contract) }
   let!(:other_contract) { FactoryBot.create(:contract) }
-   
+  
   let(:road_order) { FactoryBot.build_stubbed(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
   let(:other_road_order) { FactoryBot.build_stubbed(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
-    
+  
   let!(:car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: road_order) }
   let!(:other_car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: other_road_order) }
   
@@ -441,7 +441,6 @@ RSpec.shared_examples "a user who can only read movements for their contracts" d
   
   let!(:movement) { FactoryBot.build(:movement, car_road_order: car_road_order, definition: definition) }
   let!(:other_movement) { FactoryBot.build(:movement, car_road_order: other_car_road_order, definition: other_definition) }
-  
   
   let(:update_road_order) { FactoryBot.create(:road_order, contract: contract, station: FactoryBot.create(:station, contract: contract)) }
   let(:other_update_road_order) { FactoryBot.create(:road_order, contract: other_contract, station: FactoryBot.create(:station, contract: other_contract)) }
@@ -499,12 +498,12 @@ RSpec.shared_examples "a user who can only read movements for their contracts" d
 end
 
 RSpec.shared_examples "a user who can read all movements" do |role|
-    let!(:contract) { FactoryBot.create(:contract) }
+  let!(:contract) { FactoryBot.create(:contract) }
   let!(:other_contract) { FactoryBot.create(:contract) }
-   
+  
   let(:road_order) { FactoryBot.build_stubbed(:road_order, contract: contract, station: FactoryBot.build_stubbed(:station, contract: contract)) }
   let(:other_road_order) { FactoryBot.build_stubbed(:road_order, contract: other_contract, station: FactoryBot.build_stubbed(:station, contract: other_contract)) }
-    
+  
   let!(:car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: road_order) }
   let!(:other_car_road_order) { FactoryBot.build_stubbed(:car_road_order, car: FactoryBot.create(:car), road_order: other_road_order) }
   
@@ -513,7 +512,6 @@ RSpec.shared_examples "a user who can read all movements" do |role|
   
   let!(:movement) { FactoryBot.build(:movement, car_road_order: car_road_order, definition: definition) }
   let!(:other_movement) { FactoryBot.build(:movement, car_road_order: other_car_road_order, definition: other_definition) }
-  
   
   let(:update_road_order) { FactoryBot.create(:road_order, contract: contract, station: FactoryBot.create(:station, contract: contract)) }
   let(:other_update_road_order) { FactoryBot.create(:road_order, contract: other_contract, station: FactoryBot.create(:station, contract: other_contract)) }
@@ -566,6 +564,93 @@ RSpec.shared_examples "a user who can read all movements" do |role|
 
   it "can read movement for an inaccessible contract" do
     expect(ability).to be_able_to(:read, other_update_movement)
+  end
+end
+
+RSpec.shared_examples "a user who can read all work records" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:work) { FactoryBot.create(:work, contract: contract) }
+  let!(:other_work) { FactoryBot.create(:work) } # new contract object will be created
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  let!(:ability) { Ability.new(this_user) }
+  
+  it "cannot create a work record" do
+    expect(ability).to_not be_able_to(:create, Work)
+  end
+  
+  it "cannot update a work record" do
+    expect(ability).to_not be_able_to(:update, Work)
+  end
+  
+  it "cannot destroy a work record" do
+    expect(ability).to_not be_able_to(:destroy, Work)
+  end
+  
+  it "can read a new work record for their contract" do
+    expect(ability).to be_able_to(:read, work)
+  end
+  
+  it "can read a new work record for a different contract" do
+    expect(ability).to be_able_to(:read, other_work)
+  end
+end
+
+RSpec.shared_examples "a user who can only read their work records" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:work) { FactoryBot.create(:work, contract: contract) }
+  let!(:other_work) { FactoryBot.create(:work) } # new contract object will be created
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  let!(:ability) { Ability.new(this_user) }
+  
+  it "cannot create a new work record" do
+    expect(ability).to_not be_able_to(:create, Work)
+  end
+  
+  it "cannot update a new work record" do
+    expect(ability).to_not be_able_to(:update, Work)
+  end
+  
+  it "cannot destroy a new work record" do
+    expect(ability).to_not be_able_to(:destroy, Work)
+  end
+  
+  it "can read a new work record for their contract" do
+    expect(ability).to be_able_to(:read, work)
+  end
+  
+  it "cannot read a new work record for a different contract" do
+    expect(ability).to_not be_able_to(:read, other_work)
+  end
+end
+
+RSpec.shared_examples "a user who can create and read their work records" do |role|
+  let!(:contract) { FactoryBot.create(:contract) }
+  let!(:work) { FactoryBot.create(:work, contract: contract) }
+  let!(:other_work) { FactoryBot.create(:work) } # new contract object will be created
+  let!(:this_user) { FactoryBot.create(:user, role: role) }
+  let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
+  let!(:ability) { Ability.new(this_user) }
+  
+  it "can create a new work record" do
+    expect(ability).to be_able_to(:create, Work)
+  end
+  
+  it "can read a new work record for their contract" do
+    expect(ability).to be_able_to(:read, work)
+  end
+  
+  it "cannot read a new work record for a different contract" do
+    expect(ability).not_to be_able_to(:read, other_work)
+  end
+  
+  it "cannot update a new work record" do
+    expect(ability).to_not be_able_to(:update, Work)
+  end
+  
+  it "cannot destroy a new work record" do
+    expect(ability).to_not be_able_to(:destroy, Work)
   end
 end
 
@@ -632,10 +717,11 @@ describe "Ability" do
     it_should_behave_like "a user who can create but not modify car road orders for their contracts", "supervisor"
 
     it_should_behave_like "a user who can only read their back orders", "supervisor"
-    it_should_behave_like "a user who cannot modify back orders", "supervisor"  
+    it_should_behave_like "a user who cannot modify back orders", "supervisor"
     
-    it_should_behave_like "a user who can update movements for their contracts" , "supervisor" 
-          
+    it_should_behave_like "a user who can update movements for their contracts" , "supervisor"
+    
+    it_should_behave_like "a user who can only read their work records", "supervisor"
   end
 
   describe "planner" do
@@ -687,6 +773,8 @@ describe "Ability" do
     it_should_behave_like "a user who can create but not modify back orders for their contracts", "planner"
     
     it_should_behave_like "a user who can only read movements for their contracts", "planner"
+    
+    it_should_behave_like "a user who can only read their work records", "planner"
   end
 
   describe "method_engineer" do
@@ -738,6 +826,8 @@ describe "Ability" do
     it_should_behave_like "a user who cannot modify back orders", "method_engineer"
     
     it_should_behave_like "a user who can only read movements for their contracts", "method_engineer"
+    
+    it_should_behave_like "a user who can only read their work records", "method_engineer"
   end
 
   describe "quality" do
@@ -788,7 +878,9 @@ describe "Ability" do
     it_should_behave_like "a user who can only read their back orders", "quality"
     it_should_behave_like "a user who cannot modify back orders", "quality"
     
-    it_should_behave_like "a user who can update movements for their contracts" , "quality" 
+    it_should_behave_like "a user who can update movements for their contracts" , "quality"
+    
+    it_should_behave_like "a user who can only read their work records", "quality"
   end
 
   describe "station" do
@@ -840,6 +932,8 @@ describe "Ability" do
     it_should_behave_like "a user who cannot modify back orders", "station"
     
     it_should_behave_like "a user who can only read movements for their contracts", "station"
+    
+    it_should_behave_like "a user who can create and read their work records", "station"
   end
 
   describe "admin" do
@@ -939,6 +1033,8 @@ describe "Ability" do
     it_should_behave_like "a user who cannot modify back orders", "admin"
     
     it_should_behave_like "a user who can only read movements for their contracts", "admin"
+    
+    it_should_behave_like "a user who can only read their work records", "admin"
   end
 
   describe "super_admin" do
@@ -978,6 +1074,8 @@ describe "Ability" do
     it_should_behave_like "a user who cannot modify back orders", "super_admin"
     
     it_should_behave_like "a user who can read all movements", "super_admin"
+    
+    it_should_behave_like "a user who can read all work records", "super_admin"
   end
 
   def can_read_the_site_they_belong_to(user)
