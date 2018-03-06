@@ -255,6 +255,23 @@ ActiveRecord::Schema.define(version: 20180306183906) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "works", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "parent_id"
+    t.integer "completion", default: 0
+    t.datetime "actual_time"
+    t.datetime "override_time"
+    t.string "action"
+    t.string "position"
+    t.string "parent_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "contract_id"
+    t.bigint "operator_id"
+    t.index ["contract_id"], name: "index_works_on_contract_id"
+    t.index ["operator_id"], name: "index_works_on_operator_id"
+    t.index ["parent_type", "parent_id"], name: "index_works_on_parent_type_and_parent_id"
+  end
+
   add_foreign_key "accesses", "contracts"
   add_foreign_key "accesses", "users"
   add_foreign_key "back_orders", "contracts"
@@ -278,4 +295,6 @@ ActiveRecord::Schema.define(version: 20180306183906) do
   add_foreign_key "transfer_orders", "stations"
   add_foreign_key "uploads", "users"
   add_foreign_key "users", "sites"
+  add_foreign_key "works", "contracts"
+  add_foreign_key "works", "operators"
 end
