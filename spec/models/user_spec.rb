@@ -15,6 +15,18 @@ RSpec.describe User, type: :model do
   
   it { should validate_presence_of :site_name_text }
   
+  describe :email do
+    it "cannot be nil" do
+      expect(FactoryBot.build(:user, email: nil)).to_not be_valid
+    end
+
+    it "need not be unique" do
+      user1 = FactoryBot.create(:user, email: "email@email.com")
+      user2 = FactoryBot.build(:user, email: user1.username)
+      expect(user2).to be_valid
+    end
+  end
+  
   describe :username do
     it "cannot be nil" do
       expect(FactoryBot.build(:user, username: nil)).to_not be_valid
