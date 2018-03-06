@@ -39,8 +39,8 @@ RSpec.describe OperatorsController, type: :controller do
         let!(:operator4) { FactoryBot.create(:operator, :site => site, :badge => "operator4", :created_at => 1.hour.ago, :updated_at => 1.hour.ago) }
         
         it "with a valid time works" do
-          # record current time
-          now_as_timestamp = DateTime.now().to_f * 1000
+          # use close to current time
+          now_as_timestamp = 1.minute.ago.to_f * 1000
           
           get :index, params: { :time => now_as_timestamp }
           result = assigns(:operators)
