@@ -45,14 +45,14 @@ class WorksController < ApplicationController
     # Only allow a trusted parameter "white list" through.
     def work_params
       params.require(:work).permit(
-      :operator_id,
-      :actual_time,
-      :override_time,
-      :action,
-      :position,
-      :parent_type,
-      :parent_id,
-      :completion,
-      :contract_id)
+        :operator_id,
+        :actual_time,
+        :override_time,
+        :action,
+        :position,
+        :parent_type,
+        :parent_id,
+        :completion
+      )
     end
 end

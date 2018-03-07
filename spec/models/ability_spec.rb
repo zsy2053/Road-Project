@@ -568,8 +568,9 @@ RSpec.shared_examples "a user who can read all movements" do |role|
 end
 
 RSpec.shared_examples "a user who can read all work records" do |role|
-  let!(:contract) { FactoryBot.create(:contract) }
-  let!(:work) { FactoryBot.create(:work, contract: contract) }
+  let!(:movement) { FactoryBot.create(:movement) }
+  let!(:contract) { movement.definition.road_order.contract }
+  let!(:work) { FactoryBot.create(:work, parent: movement, contract: contract) }
   let!(:other_work) { FactoryBot.create(:work) } # new contract object will be created
   let!(:this_user) { FactoryBot.create(:user, role: role) }
   let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
@@ -597,8 +598,9 @@ RSpec.shared_examples "a user who can read all work records" do |role|
 end
 
 RSpec.shared_examples "a user who can only read their work records" do |role|
-  let!(:contract) { FactoryBot.create(:contract) }
-  let!(:work) { FactoryBot.create(:work, contract: contract) }
+  let!(:movement) { FactoryBot.create(:movement) }
+  let!(:contract) { movement.definition.road_order.contract }
+  let!(:work) { FactoryBot.create(:work, parent: movement, contract: contract) }
   let!(:other_work) { FactoryBot.create(:work) } # new contract object will be created
   let!(:this_user) { FactoryBot.create(:user, role: role) }
   let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }
@@ -626,8 +628,9 @@ RSpec.shared_examples "a user who can only read their work records" do |role|
 end
 
 RSpec.shared_examples "a user who can create and read their work records" do |role|
-  let!(:contract) { FactoryBot.create(:contract) }
-  let!(:work) { FactoryBot.create(:work, contract: contract) }
+  let!(:movement) { FactoryBot.create(:movement) }
+  let!(:contract) { movement.definition.road_order.contract }
+  let!(:work) { FactoryBot.create(:work, parent: movement, contract: contract) }
   let!(:other_work) { FactoryBot.create(:work) } # new contract object will be created
   let!(:this_user) { FactoryBot.create(:user, role: role) }
   let!(:access) { FactoryBot.create(:access, user: this_user, contract: contract) }

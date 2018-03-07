@@ -2,11 +2,16 @@ require 'rails_helper'
 
 RSpec.describe WorksController, type: :controller do
   describe "GET #index" do
-    let(:site) { FactoryBot.create(:site) }
-    let(:contract) { FactoryBot.create(:contract, :site => site) }
-    let!(:movement1) { FactoryBot.create(:movement) }
-    let!(:work1) { FactoryBot.create(:work, :contract => contract, :parent_id => movement1.id, :parent_type => "Movement") }
-    let!(:work2) { FactoryBot.create(:work, :contract => contract) }
+    let!(:car_road_order) { FactoryBot.create(:car_road_order) }
+    let(:road_order) { car_road_order.road_order }
+    let(:contract) { road_order.contract }
+    let!(:definition1) { FactoryBot.create(:definition, road_order: road_order) }
+    let!(:definition2) { FactoryBot.create(:definition, road_order: road_order) }
+    let!(:movement1) { FactoryBot.create(:movement, definition: definition1, car_road_order: car_road_order) }
+    let!(:movement2) { FactoryBot.create(:movement, definition: definition2, car_road_order: car_road_order) }
+    let!(:site) { contract.site }
+    let!(:work1) { FactoryBot.create(:work, :contract => contract, :parent => movement1) }
+    let!(:work2) { FactoryBot.create(:work, :contract => contract, :parent => movement2) }
 
     subject { get :index, {} }
 
@@ -48,10 +53,10 @@ RSpec.describe WorksController, type: :controller do
   end
 
   describe "GET #show" do
-    let(:site) { FactoryBot.create(:site) }
-    let(:contract) { FactoryBot.create(:contract, :site => site) }
-    let!(:work1) { FactoryBot.create(:work, :contract => contract) }
-    let!(:work2) { FactoryBot.create(:work, :contract => contract) }
+    let!(:movement) { FactoryBot.create(:movement) }
+    let!(:contract) { movement.definition.road_order.contract }
+    let!(:site) { contract.site }
+    let!(:work1) { FactoryBot.create(:work, :contract => contract, :parent => movement) }
 
     context "for anonymous user" do
       it "returns unauthorized" do
@@ -81,19 +86,23 @@ RSpec.describe WorksController, type: :controller do
   end
 
   describe "POST #create" do
-    let(:site) { FactoryBot.create(:site) }
-    let!(:contract) { FactoryBot.create(:contract, :site => site) }
-    let!(:position1) { FactoryBot.create(:position) }
-    let!(:operator1) { FactoryBot.create(:operator) }
-    let!(:movement1) { FactoryBot.create(:movement) }
+    let!(:movement) { FactoryBot.create(:movement) }
+    let!(:car_road_order) { movement.car_road_order }
+    let!(:contract) { movement.definition.road_order.contract }
+    let!(:site) { contract.site }
+    let!(:position) { FactoryBot.create(:position, car_road_order: car_road_order) }
+    let!(:operator) { FactoryBot.create(:operator, site: site) }
+    
     let(:valid_attributes) {
-      { operator_id: operator1.id,
+      {
+        operator_id: operator.id,
         actual_time: Time.now,
+        override_time: Time.now,
         action: "Start",
         parent_type: "Movement",
-        position: position1.name,
-        parent_id: movement1.id,
-        contract_id: contract.id }
+        position: position.name,
+        parent_id: movement.id
+      }
     }
 
     let(:invalid_attributes) {
@@ -140,12 +149,13 @@ RSpec.describe WorksController, type: :controller do
       it "return correct object of operator" do
         post :create, params: { work: valid_attributes }
         result = assigns(:work_record)
-        expect(result.operator).to eq(operator1)
+        expect(result.operator).to eq(operator)
         # compare times as timestamps removing fractional component
         expect(result.actual_time.to_f.floor).to eq(valid_attributes[:actual_time].to_f.floor)
+        expect(result.override_time.to_f.floor).to eq(valid_attributes[:override_time].to_f.floor)
         expect(result.action).to eq("Start")
-        expect(result.parent).to eq(movement1)
-        expect(result.position).to eq(position1.name)
+        expect(result.parent).to eq(movement)
+        expect(result.position).to eq(position.name)
         expect(result.contract).to eq(contract)
       end
     end

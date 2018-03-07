@@ -8,6 +8,13 @@ RSpec.describe Work, type: :model do
   it { should belong_to(:parent) }
 
   it { should belong_to(:contract) }
+  
+  it "should assign contract based on movement" do
+    movement = FactoryBot.create(:movement)
+    work = FactoryBot.create(:work, parent: movement, contract: nil)
+
+    expect(work).to be_valid
+  end
 
   it { should belong_to(:operator) }
 
@@ -65,16 +72,78 @@ RSpec.describe Work, type: :model do
       expect(work_record.override_time.to_s).to eq(timeString)
     end
 
-    it "can accept nil value" do
+    it "cannot accept nil value" do
       timeString = nil
-      expect(FactoryBot.build(:work, :override_time => timeString)).to be_valid
+      expect(FactoryBot.build(:work, :override_time => timeString)).to_not be_valid
     end
 
     it "cannot accept bad input" do
       timeString = "something"
       a = FactoryBot.build(:work, :override_time => timeString)
-      puts a.override_time
       expect(FactoryBot.build(:work, :override_time => timeString)).to_not be_valid
+    end
+    
+    it "can follow another work entry for the same operator" do
+      time1 = 2.second.ago
+      time2 = 1.second.ago
+      expect(time2 > time1).to be_truthy
+      
+      timeString1 = time1.to_s
+      timeString2 = time2.to_s
+      
+      movement = FactoryBot.create(:movement)
+      contract = movement.definition.road_order.contract
+      site = contract.site
+      operator = FactoryBot.create(:operator, site: site)
+      
+      work1 = FactoryBot.create(:work, :contract => contract, :parent => movement, :operator => operator, :override_time => timeString1)
+      
+      work2 = FactoryBot.build(:work, :contract => contract, :parent => movement, :operator => operator, :override_time => timeString2)
+      
+      expect(work2).to be_valid
+    end
+    
+    it "cannot preceed another work entry for the same operator" do
+      time1 = 1.second.ago
+      time2 = 2.second.ago
+      expect(time2 < time1).to be_truthy
+      
+      timeString1 = time1.to_s
+      timeString2 = time2.to_s
+      
+      movement = FactoryBot.create(:movement)
+      contract = movement.definition.road_order.contract
+      site = contract.site
+      operator = FactoryBot.create(:operator, site: site)
+      
+      work1 = FactoryBot.create(:work, :contract => contract, :parent => movement, :operator => operator, :override_time => timeString1)
+      
+      work2 = FactoryBot.build(:work, :contract => contract, :parent => movement, :operator => operator, :override_time => timeString2)
+      
+      expect(work2).to_not be_valid
+      # use floor since milliseconds are not captured
+      expect(work2.errors[:override_time]).to eq([ 'cannot preceed last time entry of [' + time1.to_f.floor.to_s + ']' ])
+    end
+    
+    it "can preceed another work entry for a different operator" do
+      time1 = 1.second.ago
+      time2 = 2.second.ago
+      expect(time2 < time1).to be_truthy
+      
+      timeString1 = time1.to_s
+      timeString2 = time2.to_s
+      
+      movement = FactoryBot.create(:movement)
+      contract = movement.definition.road_order.contract
+      site = contract.site
+      operator1 = FactoryBot.create(:operator, site: site)
+      operator2 = FactoryBot.create(:operator, site: site)
+      
+      work1 = FactoryBot.create(:work, :contract => contract, :parent => movement, :operator => operator1, :override_time => timeString1)
+      
+      work2 = FactoryBot.build(:work, :contract => contract, :parent => movement, :operator => operator2, :override_time => timeString2)
+      
+      expect(work2).to be_valid
     end
   end
 end
