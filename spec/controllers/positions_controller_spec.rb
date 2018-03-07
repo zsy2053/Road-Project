@@ -53,12 +53,14 @@ RSpec.describe PositionsController, type: :controller do
   end
 
   describe "PUT #update" do
+    let(:db_time) { 10.day.ago }
+    
     context "for a position that allows multiple" do
-      let!(:position1) { FactoryBot.create(:position, :car_road_order_id => car_road_order1.id, :allows_multiple => true) }
+      let!(:position1) { FactoryBot.create(:position, :car_road_order_id => car_road_order1.id, :allows_multiple => true, :created_at => db_time, :updated_at => db_time) }
     
       context "when positions are empty" do
-        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id) }
-        let!(:operator2) { FactoryBot.create(:operator, :site_id => site.id) }
+        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :created_at => db_time, :updated_at => db_time) }
+        let!(:operator2) { FactoryBot.create(:operator, :site_id => site.id, :created_at => db_time, :updated_at => db_time) }
     
         subject { put :update, params: { :id => position1.id, :operator_ids => [operator1.id, operator2.id] } }
     
@@ -89,6 +91,11 @@ RSpec.describe PositionsController, type: :controller do
             expect(result.operators).to include(operator1)
             expect(result.operators).to include(operator2)
           end
+          
+          it "updates the updated_at attribute of the operators" do
+            # updated_at attribute for operator1 should be updated
+            expect { subject }.to change{ Operator.where("updated_at > ?", db_time).count }.by(2)
+          end
         end
     
         context "for authenticate user but no access" do
@@ -97,6 +104,7 @@ RSpec.describe PositionsController, type: :controller do
             FactoryBot.create(:access, :contract => contract1, :user_id => @authenticated_user.id)
             add_jwt_header(request, @authenticated_user)
           end
+          
           it "returns a failed response" do
             subject
             expect(response).to have_http_status(:forbidden)
@@ -105,8 +113,8 @@ RSpec.describe PositionsController, type: :controller do
       end
   
       context "when positions are modified" do
-        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :position => position1) }
-        let!(:operator2) { FactoryBot.create(:operator, :site_id => site.id) }
+        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :position => position1, :created_at => db_time, :updated_at => db_time) }
+        let!(:operator2) { FactoryBot.create(:operator, :site_id => site.id, :created_at => db_time, :updated_at => db_time) }
     
         subject { put :update, params: { :id => position1.id, :operator_ids => [operator2.id] } }
     
@@ -137,6 +145,11 @@ RSpec.describe PositionsController, type: :controller do
             expect(result.operators).not_to include(operator1)
             expect(result.operators).to include(operator2)
           end
+          
+          it "updates the updated_at attribute of the operators" do
+            # updated_at attribute for operator1 and operator2 should be updated
+            expect { subject }.to change{ Operator.where("updated_at > ?", db_time).count }.by(2)
+          end
         end
     
         context "for authenticate user but no access" do
@@ -153,8 +166,8 @@ RSpec.describe PositionsController, type: :controller do
       end
   
       context "when positions are removed" do
-        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :position => position1) }
-        let!(:operator2) { FactoryBot.create(:operator, :site_id => site.id, :position => position1) }
+        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :position => position1, :created_at => db_time, :updated_at => db_time) }
+        let!(:operator2) { FactoryBot.create(:operator, :site_id => site.id, :position => position1, :created_at => db_time, :updated_at => db_time) }
     
         subject { put :update, params: { :id => position1.id, :operator_ids => [] } }
     
@@ -197,16 +210,21 @@ RSpec.describe PositionsController, type: :controller do
             expect(result.operators).not_to include(operator1)
             expect(result.operators).not_to include(operator2)
           end
+          
+          it "updates the updated_at attribute of the operators" do
+            # updated_at attribute for operator1 and operator2 should be updated
+            expect { subject }.to change{ Operator.where("updated_at > ?", db_time).count }.by(2)
+          end
         end
       end
     end
     
     context "for a position that doesn't allow multiple" do
-      let!(:position1) { FactoryBot.create(:position, :car_road_order_id => car_road_order1.id, :allows_multiple => false) }
+      let!(:position1) { FactoryBot.create(:position, :car_road_order_id => car_road_order1.id, :allows_multiple => false, :created_at => db_time, :updated_at => db_time) }
       
       context "when attempting to add multiple operators" do
-        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id) }
-        let!(:operator2) { FactoryBot.create(:operator, :site_id => site.id) }
+        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :created_at => db_time, :updated_at => db_time) }
+        let!(:operator2) { FactoryBot.create(:operator, :site_id => site.id, :created_at => db_time, :updated_at => db_time) }
     
         subject { put :update, params: { :id => position1.id, :operator_ids => [operator1.id, operator2.id] } }
     
@@ -228,6 +246,11 @@ RSpec.describe PositionsController, type: :controller do
             subject
             expect(response).to have_http_status(:unprocessable_entity)
           end
+          
+          it "updates the updated_at attribute of the operators" do
+            # updated_at attribute for operator1 and operator2 should be updated
+            expect { subject }.to change{ Operator.where("updated_at > ?", db_time).count }.by(0)
+          end
         end
     
         context "for authenticate user but no access" do
@@ -244,7 +267,7 @@ RSpec.describe PositionsController, type: :controller do
       end
       
       context "when positions are empty" do
-        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id) }
+        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :created_at => db_time, :updated_at => db_time) }
     
         subject { put :update, params: { :id => position1.id, :operator_ids => [operator1] } }
     
@@ -286,11 +309,16 @@ RSpec.describe PositionsController, type: :controller do
             expect(result.operators.count).to eq(1)
             expect(result.operators).to include(operator1)
           end
+          
+          it "updates the updated_at attribute of the operators" do
+            # updated_at attribute for operator1 should be updated
+            expect { subject }.to change{ Operator.where("updated_at > ?", db_time).count }.by(1)
+          end
         end
       end
   
       context "when positions are filled" do
-        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :position => position1) }
+        let!(:operator1) { FactoryBot.create(:operator, :site_id => site.id, :position => position1, :created_at => db_time, :updated_at => db_time) }
     
         subject { put :update, params: { :id => position1.id, :operator_ids => [] } }
     
@@ -331,6 +359,11 @@ RSpec.describe PositionsController, type: :controller do
             expect(result).to eq(position1)
             expect(result.operators.count).to eq(0)
             expect(result.operators).not_to include(operator1)
+          end
+          
+          it "updates the updated_at attribute of the operators" do
+            # updated_at attribute for operator1 should be updated
+            expect { subject }.to change{ Operator.where("updated_at > ?", db_time).count }.by(1)
           end
         end
       end
