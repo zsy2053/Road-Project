@@ -4,7 +4,7 @@ class Work < ApplicationRecord
   belongs_to :parent, polymorphic: true
   belongs_to :contract
   belongs_to :operator
-  
+  belongs_to :stop_reason, optional: true
   validates :parent_type, presence: true, :inclusion => {:in => ["Snag", "Movement"]}
   validates :action, presence: true
   validates :position, presence: true

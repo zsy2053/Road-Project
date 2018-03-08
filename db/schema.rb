@@ -334,7 +334,7 @@ ActiveRecord::Schema.define(version: 20180308000758) do
     t.datetime "updated_at", null: false
     t.bigint "contract_id"
     t.bigint "operator_id"
-    t.string "stop_reason"
+    t.integer "stop_reason_id"
     t.text "comment"
     t.index ["contract_id"], name: "index_works_on_contract_id"
     t.index ["operator_id"], name: "index_works_on_operator_id"
