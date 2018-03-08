@@ -53,7 +53,7 @@ class WorksController < ApplicationController
         :parent_type,
         :parent_id,
         :completion,
-        :stop_reason,
+        :stop_reason_id,
         :comment
       )
     end
