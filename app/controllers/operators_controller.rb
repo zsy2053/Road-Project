@@ -7,7 +7,7 @@ class OperatorsController < ApplicationController
   def index
     authorize! :read, Operator
     @operators = Operator.accessible_by(current_ability)
-    
+
     # if a timestamp is provided
     if params[:time]
       # convert string parameter to a date -- bad input will be interpreted as timestamp = 0 which will result in all returned
@@ -15,7 +15,7 @@ class OperatorsController < ApplicationController
       date_range = tmp..DateTime.now
       @operators = @operators.where(updated_at: date_range)
     end
-    
+
     render json: @operators, except: :badge
   end
 
@@ -48,6 +48,14 @@ class OperatorsController < ApplicationController
     end
   end
 
+  def assign_movement
+    @update_operator = Operator.find(params[:id])
+    if @update_operator.update(:movement_id => params[:movement_id])
+      render json: @update_operator, except: :badge
+    else
+      render json: @update_operator.errors, status: :unprocessable_entity
+    end
+  end
   # DELETE /operators/1
   # def destroy
   #   @operator.destroy

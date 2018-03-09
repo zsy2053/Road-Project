@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   resources :works, only: [:index, :create, :show]
   resources :stop_reasons, only: [:index, :show]
   resources :operators, only: [:index, :show, :create, :update]
+  patch 'operators/assign_movement/:id', to: 'operators#assign_movement'
   resources :movements, only: [:show, :update]
   resources :positions, only: [:show, :update]
 
