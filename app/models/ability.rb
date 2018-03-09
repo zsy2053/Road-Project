@@ -56,7 +56,7 @@ class Ability
           can :read, TransferOrder, :contract_id => user_contracts
         end
 
-        can :update, Movement, road_order: { :contract_id => user_contracts } if user.quality or user.station?
+        can :update, Movement, road_order: { :contract_id => user_contracts } if user.quality? or user.station?
         if user.quality? or user.station?
           can :read, Operator, :site_id => user.site_id
           can :read, TransferOrder, :contract_id => user_contracts
