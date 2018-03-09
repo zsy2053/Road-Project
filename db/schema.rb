@@ -21,6 +21,58 @@ ActiveRecord::Schema.define(version: 20180308000758) do
     t.index ["user_id"], name: "index_accesses_on_user_id"
   end
 
+  create_table "andon_calls", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "andon_group_id"
+    t.bigint "station_id"
+    t.bigint "operator_id"
+    t.text "description"
+    t.datetime "date_opened"
+    t.datetime "date_acknowledged"
+    t.bigint "acknowledged_by_id"
+    t.datetime "date_accepted"
+    t.bigint "accepted_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "level_number", default: 0
+    t.string "andon_reference"
+    t.datetime "date_cancelled"
+    t.text "cancel_reason"
+    t.index ["accepted_by_id"], name: "index_andon_calls_on_accepted_by_id"
+    t.index ["acknowledged_by_id"], name: "index_andon_calls_on_acknowledged_by_id"
+    t.index ["andon_group_id"], name: "index_andon_calls_on_andon_group_id"
+    t.index ["andon_reference"], name: "index_andon_calls_on_andon_reference", unique: true
+    t.index ["operator_id"], name: "index_andon_calls_on_operator_id"
+    t.index ["station_id"], name: "index_andon_calls_on_station_id"
+  end
+
+  create_table "andon_groups", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string "title"
+    t.integer "minutes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "disabled", default: false
+    t.index ["title"], name: "index_andon_groups_on_contract_id_and_title", unique: true
+  end
+
+  create_table "andon_levels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "andon_group_id"
+    t.integer "number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["andon_group_id"], name: "index_andon_levels_on_andon_group_id"
+  end
+
+  create_table "andon_users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "user_id"
+    t.bigint "andon_level_id"
+    t.boolean "email", default: false
+    t.boolean "sms", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["andon_level_id"], name: "index_andon_users_on_andon_level_id"
+    t.index ["user_id"], name: "index_andon_users_on_user_id"
+  end
+
   create_table "back_orders", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "bom_exp_no"
     t.bigint "station_id"
@@ -94,6 +146,21 @@ ActiveRecord::Schema.define(version: 20180308000758) do
     t.datetime "updated_at", null: false
     t.string "positions", null: false
     t.index ["road_order_id"], name: "index_definitions_on_road_order_id"
+  end
+
+  create_table "delayed_jobs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
   create_table "movements", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -276,6 +343,12 @@ ActiveRecord::Schema.define(version: 20180308000758) do
 
   add_foreign_key "accesses", "contracts"
   add_foreign_key "accesses", "users"
+  add_foreign_key "andon_calls", "andon_groups"
+  add_foreign_key "andon_calls", "operators"
+  add_foreign_key "andon_calls", "stations"
+  add_foreign_key "andon_calls", "users", column: "accepted_by_id"
+  add_foreign_key "andon_calls", "users", column: "acknowledged_by_id"
+  add_foreign_key "andon_levels", "andon_groups"
   add_foreign_key "back_orders", "contracts"
   add_foreign_key "back_orders", "stations"
   add_foreign_key "car_road_orders", "cars"
