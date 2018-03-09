@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p>
+      Work has been stopped at the production floor. Please find details below:<br>
+    </p>
+    <p>
+      Operator Name: <%= @operator.first_name %> <%= @operator.last_name %><br>
+      Movement No.: <%= @movement.definition.name %><br>
+      Station Name: <%= @movement.car_road_order.station.name %><br>
+      Car Type: <%= @movement.car_road_order.car.car_type %><br>
+      Car No.: <%= @movement.car_road_order.car.number %><br>
+      Day/shift: <%= @movement.definition.day %> <%= @movement.definition.shift %><br>
+      Production Critical: <%= @movement.production_critical%><br>
+      QA Critical: <%= @movement.quality_critical%><br>
+      Stop Reason: <%= @stop_reason.label %><br>
+    </p>
+  </body>
+</html>

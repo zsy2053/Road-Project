@@ -52,7 +52,9 @@ class WorksController < ApplicationController
         :position,
         :parent_type,
         :parent_id,
-        :completion
+        :completion,
+        :stop_reason_id,
+        :comment
       )
     end
 end

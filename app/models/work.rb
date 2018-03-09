@@ -1,9 +1,11 @@
 class Work < ApplicationRecord
   before_validation :set_contract
-  
+  after_save :send_stop_reason_email
   belongs_to :parent, polymorphic: true
   belongs_to :contract
   belongs_to :operator
+  belongs_to :stop_reason, optional: true
+  
   
   validates :parent_type, presence: true, :inclusion => {:in => ["Snag", "Movement"]}
   validates :action, presence: true
@@ -25,6 +27,14 @@ class Work < ApplicationRecord
     end
   end
   
+  def send_stop_reason_email
+    if stop_reason && stop_reason.should_alert
+      supervisors = User.select {|user| user.supervisor? && user.contracts.pluck(:id).include?(contract_id)}
+      supervisors.each do |user|
+        StopReasonMailer.perform(user, operator_id, parent_id, parent_type, stop_reason).deliver_now
+      end
+    end
+  end
   # automatically assign contract based on parent before validations run
   def set_contract
     if self.parent_id

@@ -7,5 +7,7 @@ FactoryBot.define do
     actual_time Time.now
     override_time Time.now
     action "Stop"
+    stop_reason
+    comment "This is a comment"
   end
 end
