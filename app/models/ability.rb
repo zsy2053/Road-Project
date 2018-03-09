@@ -17,11 +17,11 @@ class Ability
         can :manage, TransferOrder
       else
         can :read, StopReason
-        
+
         can :read, Site, :id => user.site_id
-        
+
         user_contracts = user.contracts.pluck(:id)
-        
+
         # non super admins can only read contracts, stations, road orders, and back orders they have access to
         can :read, Contract, :id => user_contracts
         can :read, Station, :contract_id => user_contracts
@@ -32,7 +32,7 @@ class Ability
         can :read, Movement, road_order: { :contract_id => user_contracts }
         can :read, Work, :contract_id => user_contracts
         can :read, Position, car_road_order: { road_order: { :contract_id => user_contracts } }
-        
+
         # method engineers can also create road orders for their contracts
         can :create, RoadOrder, :contract_id => user_contracts if user.method_engineer?
 
@@ -56,7 +56,7 @@ class Ability
           can :read, TransferOrder, :contract_id => user_contracts
         end
 
-        can :update, Movement, road_order: { :contract_id => user_contracts } if user.quality?
+        can :update, Movement, road_order: { :contract_id => user_contracts } if user.quality or user.station?
         if user.quality? or user.station?
           can :read, Operator, :site_id => user.site_id
           can :read, TransferOrder, :contract_id => user_contracts
